@@ -28,8 +28,8 @@
 \begin{frontmatter}
 
 %\pretitle{}
-\title{Dynamic Linked Open Data: A Survey}
-\runningtitle{Dynamics on Linked Open Data: A Survey}
+\title{Dynamic Linked Data: A Survey}
+\runningtitle{Dynamics on Linked Data: A Survey}
 %\subtitle{}
 
 % For one author:
@@ -77,169 +77,276 @@ Linked Open Datasets contain descriptions that change over time. The resources d
 
 \section{Introduction}\label{Introduction}
 
+%\textbf{Contex}: 
+
 The Semantic Web (SW) is an extension of the WWW towards a Web of Data (WD), where data on the Web are published through W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } standards. The goal is to enable computers to do more automated tasks by developing systems that can support trusted interactions over the network. The Linked Data (LD) term points to a set of steps to distribute and connect structured data on the Web using SW standards. The LD principles\footnote{LD principles: https://www.w3.org/DesignIssues/LinkedData.html} provide a flexible publishing paradigm to integrate and interlink any kind of data from arbitrary datasets published by various data providers on the Web. Once LD is presented under an open license, it is called Linked Open Data (LOD). LD is empowered by the SW formats and technologies that enable it, such as RDF\footnote{Resource Description Framework: https://www.w3.org/RDF/} and SPARQL\footnote{Semantic Query Language: https://www.w3.org/TR/sparql11-overview/}, standardized approaches to create data stores and query them.
 
-From the time that the LD principles have been created until now, Linked Data has grown significantly in the number of RDF datasets and the size of those datasets~\cite{SchmachtenbergBP14}. Additionally, a wide variety of applications use information sourced from the Web to offer services. Also, recent investigations~\cite{KaferAUOH13, UmbrichHHPD10, DividinoSGG13, AuerDML12, SchmachtenbergBP14} have shown that the data published and interlinked on the Web is subject to frequent changes. The volume and velocity of changes constitute important challenges that applications must handle to keep results up-to-date.
+%\textbf{Link Data Growth:}
 
-The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, these caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
+Every day more players participate in the ecosystem of linked data and the community around Linked Data continues to develop tools for data editors to share their data as Linked Data. The result of these efforts is several software libraries that convert information from arbitrary formats to RDF, for example: D2R Server3, XLWrap4, Any235, etc.
+In addition, more and more Web 2.0 portals expose their data as linked data, for example, the most used content management systems such as Drupal 7 and knowledge management systems such as SemWiki, or news portals such as the New York Times or the BBC, publish their articles following the principles of Linked Data. As a result, the resources are continuously created, moved and deleted, linked and unlinked.
+
+From the time that the LD principles have been created until now, Linked Data has grown significantly in the number of RDF datasets and the size of those datasets~\cite{SchmachtenbergBP14}. Additionally, a wide variety of applications use information sourced from the Web to offer services.
+
+%\textbf{Dynamic Challenges:}
+
+Web of Data continues to expand in size, scope and diversity, data editors continually try to improve the quality of their data by changing vocabularies, adding new information and relationships, or eliminating obsolete ones.
+
+Recent investigations~\cite{UmbrichHHPD10, DividinoSGG13, AuerDML12, SchmachtenbergBP14} have shown that the data published and interlinked on the Web is subject to frequent changes. The volume and velocity of changes constitute important challenges that applications must handle to keep results up-to-date.
+
+The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
+
+%\textbf{Importance of Dataset Dynamics Knowledge:}
+
+A possible threat to the quality of the linked data is the lack of knowledge about the dynamics in the dependent remote datasets. Applications that consume linked data often need to know the changes in these data sets to update local data dependencies. To update your local data dependencies, applications that consume linked data need to know which unit of data has changed, as well as how and when it has changed.
+
+Being able to understand the nature of Linked Data dynamics and characterize change is of core importance to publishing, research and development. With regards to publishing, a better understanding of Linked Data dynamics would, for example, inform the design of tools for keeping published data consistent with changes in external data. With regards to research, more granular data on Linked Data dynamics would open up new paths for exploration,  e.g., understanding the rate of change of a data set can inform a decision about whether an application will cache its content locally or query it remotely on the fly. With regards development, for current systems, the results of such studies would inform crawling strategies, local index refresh rates and update strategies, cache invalidation techniques and tuning, and so forth.
 
 Many works have tried to handle these challenges. On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
 
-Umbrich et al.~\cite{UmbrichVH10} presented an overview of existing approaches to detect, propagate and describe changes in resources and the Linked Open Data Web. They also presented four use cases that require technical solutions to deal with dynamic data and provided an overview of their requirements. However, from the development of this work to the present, many works have been developed to these and new use cases, as well as, new technical solution have been proposed.
+Today, as people develop increasingly sophisticated applications that exploit the very nature of the linked data, the robustness of the support infrastructure becomes increasingly important. Dataset dynamics affect application performance.
 
-Today, as people develop increasingly sophisticated applications that exploit the very nature of the linked data, the robustness of the support infrastructure becomes increasingly important. Dataset dynamics affect application performance
+%\textbf{Dataset dynamics as research topic:}
 
-Despite its importance, the current understanding of change dynamics for the data web is not enough. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to provide a framework/background in order to appropriately position new research activities.
+Dataset dynamics have emerged as an active research topic around 2010 through the community\footnote{https://www.w3.org/wiki/DatasetDynamics} effort to study the dynamics of the dataset, a term that essentially refers to the content and interconnection of changes in the sources of linked data.  However, although the development of research and tools has not stopped, a reduction in community's activity has been observed.
+
+%\textbf{Dataset dynamics in databases and web:}
+
+The study of changes in documents and data sets is very relevant for a broad range of application domains. 
+
+Cho and Garcia-Molina et al.~\cite{ChoG03} provided a comprehensive study on the frequency of change of web documents. They previously worked on how to integrate knowledge about the evolution of the web for incremental crawlers~\cite{ChoG00}. Additional work improved estimators to avoid the effects of incomplete change history~\cite{NeumaierU16}. Other research has focused, for example, on investigating the dynamics of Wikipedia articles~\cite{AlmeidaMC07}.
+
+There are some efforts to solve this problem in databases, e.g.~\cite{LernerH90, BancilhonDK92, Roddick95}, among others, but they do not cover all the aspects of the Linked Data datasets.
+
+%\textbf{Dataset dynamics tasks:}
+
+Considering the above, Meimaris et al.~\cite{MeimarisPPGS14} classified the benefits of evolution management into two categories. The first one is concerned with \textit{quality control and maintenance}. For instance, mishaps such as stale cache or broken links create inconsistencies and failures that are hardly feasible to overcome with no knowledge concerning the resources affected. The second one is concerned with \textit{data exploitation}, as the evolution of data itself can provide valuable insights and shed light on the dynamics of the data. In this sense, proper management of dataset dynamics in evolving could benefit intensive tasks like browser or query engines.
+
+%\textbf{Paper Why:}
+
+Despite its importance, the current understanding of the dynamics of change for the data network is not enough. The dynamics of change of the entire linked data ecosystem is not yet well understood, apart from its rapid growth, illustrated by the frequently presented linked data cloud diagrams. However, there is work in this area both at the level of research and infrastructure.
+
+Umbrich et al.~\cite{UmbrichVH10} surveyed an overview of existing dynamic datasets solutions. They provided a description of the aspects of the discovery, the level of granularity and the description of the changes, as well as detection algorithms and notification mechanisms. However, ten years have passed and since then various technical solutions have been presented to address the changes in datasets of the Web of Data. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to provide a framework/background in order to appropriately position new research activities.
 
 \subsection{Survey Scopes}\label{Scopes}
 
-This survey provides an overview of published works that directly involve with data dynamics on the Linked Open Data, as well as, the Aplications methods to deal with them, such as, detection, propagation, description, preservation and explotation.
+%\textbf{summay of the content taxonomy:}
 
-Then, we show a list of use cases that could benefit from an understanding of the dynamics of the data on the data web and can have a potential impact on several use cases:
+This survey provides an overview of the published works related to data dynamics on the Linked Open Data and the challenges that this represents for the applications that consume them (see Figure~\ref{fig:pic}). Applications that use dynamic data, in different measures, frequencies and importance have had to develop methods to synchronize their results taking into account the changing nature of the origins. We have organized this survey taking into account the general scheme of applications that consume data from the decentralized web. In Section~\ref{Data}, we propose a general description of the works that have studied large datasets to perform qualitative and quantitative analyzes, looking for patterns and semantic dependencies in the data, as well as, proposals of methods to detect the changes between different datasets versions. These changesets  detected by data sources or applications have to been represented in different ways taking into account space, time and usability requirements. In section~\ref{Archiving}, we propose a deep look at the works related to the data dynamics representations. These changes, independently if they were physically represented, must take into account by the applications, for which multiple techniques, protocols and applications have been developed to changes propagations from the data sources to the applications. In Section~\ref{Index}, we analyze the available synchronization tools, as well as, their scope and limits. Finally, in section~\ref{Query}, we show the solutions adopted by the applications to deliver accurate responses and at the same time respond to the dynamics of the data. This survey relates the developed works associated with the evolution of datasets at the data level. However, there is a lot of work on detection, representation, and management of changes at the ontological level~\cite{ZablithAdFKMPS15}.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{pic}
+	\caption{Typical workflow diagram of a LOD application handling dynamic data.}
+	\label{fig:pic}
+\end{figure}
 
-SandersonS12:synchronization, smart caching, link maintenance, and vocabulary evolution
+The survey addresses several \textit{use cases} that could benefit from an understanding of the dynamics of the data and that have been unveiled by several authors. Now we give an introductory summary of the main use cases found in literature~\cite{UmbrichVH10, PopitschH11, KaferUHP12, KaferAUOH13, MeimarisPPGS14}, as well as, the tasks involved in them (although we note that the survey will deepen each task in more depth later):
 
-UmbrichVH10:
-3.1 Use Cases UC 1: Synchronisation
-A dataset consumer wants to mirror or replicate (parts of) a dataset from the LOD cloud. Ideally, the consumer wants to be informed about the statements that have been added/removed at a certain time point. The notification about the changes enables him an efficient way to keep his dataset up-to-date. Most commonly, the synchronisation is either for a single data source or for a set of data sources.
+\textbf{Synchronization:} 
+A application wants to mirror (or copy) the (part of) linked dataset following the ``warehouse'' approaches and must synchronize with the original data source.
+The most common case is to maintain a locally cached LOD index. LinkedData's various centralized search and query methods all rely on local copies of RDF copies collected from the web. If the original data source changes, the replicated index is obsolete and affects the freshness of the results. With a more detailed knowledge of the dynamics of linked data, a centralized engine can, for example, focus on areas that catch up with rapidly changing contributions.
 
-3.2 Use Cases UC 2: Smart Caching A developer uses one or more datasets from the LOD cloud in her application(s). Rather than implementing custom-code for keeping the local data in the application up-to-date (HTTP-level, dataset-level), the developer wants to use a smart cache that offers the functionality as required (e.g., 304/HTTP-level for small set of resources, notification for bulk-updates).
+\textbf{Smart Caching:}
+Instead, the ``live querying'' approaches for Linked Data dereference and discover sources on the fly using one or more datasets.However, remote lookups are expensive to execute, thus, it uses a cache that stores local copies of remote data. which must be invalidated when the remote data change. Linking data dynamic knowledge can help to determine the sources that can be cached to save time and resources and the life time of the cached data. An useful example of application can be the smart cache integration of live querying or real-time browsing through Linked Data.
 
-3.3 Use Cases UC 3: Link Maintenance In many scenarios, we can integrate information from various datasets by using or
-creating links between the these datasets. A crucial point for any application which relies on these links is the problem that links can change or resources can disappear or moved. The application should be able to learn if a link type changed (e.g. the relationship between two instances was refined) or if the linked resources vanished or its identifier changed.
-\cite{PopitschHR10,PopitschH10,PopitschH11}
+\textbf{Link Maintenance:}
+In LD, publishers embed statements that link local to external resources to use remote data in the local application context. An important point for applications that rely on these links is that links can change, resources can be lost or moved, and new resources can be useful link targets. If the representation of these remote resources changes or becomes unavailable at a particular URI, the application must be notified to keep these links valid. Knowledge of dynamics can help publishers determine how often a linkset needs to be updated based on the target domain or link type.
 
-3.4 Use Cases UC 4: Vocabulary Evolution and Versioning A given LOD dataset contains a set of resources that conform to a particular vocabu- lary. In other words, the vocabulary provides classes and properties for expressing the data of the dataset. Whenever the vocabulary changes (evolves), i.e. a new version of the vocabulary is available, there has to be some support for the propagation of the vocabulary/ontology changes to the dataset. The resources of the dataset have to be updated, and in this way they will be conformed to the new version of the vocabulary.
+\textbf{Vocabulary Evolution and Versioning:}
+A specific LOD dataset contains a set of resources, such as clases and properties, that belongs for a particular vocabulary. The definition and structure of the ontologies and vocabularies may change.  changes related with vocabulary terms can affect the interpretation of the remote datasets. So, as vocabulary changes (evolves), there should be some support for spreading vocabulary/ontology changes to the dataset. You must update the dataset to accommodate with new version the vocabulary.
+Learning and understanding the dynamics of vocabularies may inspire and suggest better methodologies for versioning.
 
-UmbrichHHPD10: 
+\textbf{Hybrid architectures: }
+An important choice for systems that process large amounts of data is to decide between the pre-processing overhead vs the runtime-processing overhead. An application could obtain more benefits in pre-processing (for example, caching, local indexing, reasoning materialization, etc.) of the more static data and leaving the runtime-processing for more dynamic data. In a hybrid architecture, data dynamics information can help decide the most appropriate methods for the data considering that a complex query could contain both. For example, you could decompose a query and answer the static part using the cache and invoke live querying only for the most dynamic part.
 
+\textbf{Change Verification:}
+Many datasets evolve collaboratively in order to keep the information contained as current as possible. While most of the changes that occur in a dataset are correct, erroneous changes also occur due to vandalism or carelessness. Therefore, change verification is required to ensure the quality of the information stored. But manual changes verification is an intensive task. The knowledge of certain evolutionary patterns within the data could help to automatically determine whether the incoming changes are correct or not.
 
+The previous use cases require a technical infrastructure composed mainly of the following components~\cite{UmbrichVH10, PopitschH11}:
 
+\begin{itemize}
 
+\item A \textbf{Change Detection Methods} is an algorithm that is able to extract the differences between different versions of a linked dataset. These algorithms detect the changes taking into account a granularity level (e.g. RDF statements, RDF resources, etc.), a complexity level ( e.g. simples changes or compound changes), and also try to discover these changes in an unambiguous and deterministic way.
+
+\item A \textbf{Change Description Vocabulary} allows you to represent change information readable and understandable by a machine about what and how a certain resource has changed in a dataset.
+
+\item A \textbf{Dynamic Description Vocabulary} can express meta-information about the dynamics of the dataset at different granularity level (e.g. change frequency, change dimension, last update, etc.)
+
+\item A \textbf{Communication Mechanism} also known as notification protocols include the channels to propagate detected changes to consumer based on different initialization policies (e.g. push-based and pull-based)
+
+\item In the absence of mechanisms to propagate changes, the \textbf{Discovery Mechanism} allows applications to discover when changes occur.
+
+\end{itemize}
 
 \subsection{Survey Methodology}\label{Methodology}
-Research Question
-Search Strategy
-Inclusion and Exclusion Criteria
-Peer Review
+
+This systematic review was carried out following a fusion of the methodologies proposed in ~\cite{keele07, snyder19}. Next, we will present the main methodological decisions included in the review protocol, such as: the research questions we intended to answer, the selection criteria used to determine which studies are included or excluded from a the review, strategy that used to look for primary studies, including search terms and resources to be searched. To reduce the possibilities of reviewer bias, the study was conducted by 3 reviewers from 2 different institutions and we applied some polities for enrich the primary studies based on references to ensure the completeness~\cite{Wohlin14}. 
+
+An overview of our search methodology including the number of retrieved articles at each step is shown in Figure~\ref{fig:methodology} and described in detail below.
+
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=0.8]{methodology.pdf}
+	\caption{Number of articles retrieved during literature review.}
+	\label{fig:methodology}
+\end{figure*}
+
 \subsubsection{Research Question}\label{Question}
-Identify the impact of data dynamics on linked open data consumption models
 
-\textbf{Complementary Research Questions}
+The goal of this review is to analyze existing methodologies to consume of Dynamic Linked Open Data. To reach this purpose, we attempt to answers the following research questions: 
 
-Change frequency: Can we model change frequency of doc- uments with mathematical models and thus predict future changes?
+\begin{itemize}
 
-\textbf{Change patterns}: Can we mine patterns that help to cat- egories change behaviour?
+\item What methods or models exist to allow applications to consume dynamic linked data? 
 
-\textbf{Degree of change}: If a document changes, how much of its content is updated?
+\item How data dynamics impact on linked open data consumption models?
 
-\textbf{Lifespan}: What is the lifespan of Linked Data documents?
+\end{itemize}
 
-\textbf{Stability}: How stable are Linked Data documents in terms of HTTP accessibility?
+%\textbf{Complementary Research Questions}
 
-\textbf{Growth rate}: How fast is the Web of Data evolving?
+However, apart from these questions related to the technological stack of the consumption of dynamic linked data and more towards a point of view of web science, we are interested in those works that study the intrinsic dynamics of the data web answering some empirical questions related with the change degree and frequency, such as the following:
 
-\textbf{Structural changes}: Do we observe any changes in the structure of the network formed by links?
+\begin{itemize}
 
-\textbf{Change triggers}: Can we find graph patterns that trigger or propagate changes through the network?
+\item \textbf{Change frequency:} Can we model change frequency of resources and thus predict future changes?
 
-\textbf{Domain-dependent changes}: Do we observe a variation or clustering in dynamicity across different domains?
+\item \textbf{Change patterns:} Can we mine patterns that help to group by change behavior?
 
-\textbf{Vocabulary-dependent changes}: Do we observe different change patterns for data using certain vocabularies, classes or properties?
+\item \textbf{Degree of change:} How can we quantify how much a resource change?
 
-\textbf{Vocabulary changes}: How do the semantics of vocabulary terms evolve over time?
+\item \textbf{Lifespan:} How can we estimate the time-to-live of Linked Data resources?
+
+\item \textbf{Schema evolution:} How dynamics are the schema used in Linked Datasets?
+
+\item \textbf{Structural changes:} Do we observe any changes in the structure of the network formed by links?
+
+\end{itemize}
 
 \subsubsection{Inclusion and Exclusion Criteria}\label{Criteria}
 
-+ Studies focused on the dynamicity of LOD
+Based on the previous discussion, this survey includes papers that are:
 
-+ Studies focused on the synchronization policies used on LOD
+\begin{itemize}
 
-+ Studies focused on query caching/refreshing on LOD
+\item focused on the dynamicity of LOD.
 
-+ studies published in English
+\item focused on the synchronization policies used on LOD.
 
-+ Studies that were peer-reviewed and published
+\item focused on query caching/refreshing on LOD.
 
+\item published in English.
 
-how many assessors will evaluate
+\item were peer-reviewed and published.
 
-how disagreements among assessors will be resolved
+\end{itemize}
 
 \subsubsection{Search Strategy}\label{Search}
-\textbf{Search Terms}\label{Terms}
-The search strings are appropriately derived from the research questions.
-Publish or Perish
 
-refresh
-scheduling
-uptodate
-cache
-change
-dynamics
-evolving
-fresh
-freshness
+Taking into account our research questions and eligibility criteria, we define two sets of keyphrases. In the first group of we include terms related to evolution or its consequences (e.g. "dynamics", "freshness", "refresh") and in the second group, terms related to the Semantic Web datasets (e.g. "linked data", "SPARQL", "knowledge graphs"). Then the search terms finally used were the product of concatenating the keyphrases from both sets (e.g. "dynamic linked data", "refresh SPARQL"). These groups of keyphrases were enriched iteratively evaluating the adequacy of the most relevant results found and synonyms extracted from the terminology used in some relevant results. Table~\ref{tab:terms} lists the keyphrases used to search for documents.
 
-RDF
-Linked Data
-Linked Open Data
-SPARQL
-Semantic web
+%\textbf{Search Terms}\label{Terms}
 
-\textbf{Resources}\label{Resources}
+\begin{table}[]
+	\centering
+	\caption{Keyphrases used to search for primary candidate papers. DY list Keyphrases relating to Dynamics; SW lists Keyphrases relating to the Semantic Web.}
+	\label{tab:terms}
+	\begin{tabular}{ll} 
+		\hline
+		type & keyphrases  \\ \hline
+		DY    & "refresh"
+		"scheduling"
+		"uptodate" \\ &
+		"cache"
+		"change"
+		"dynamics" \\ &
+		"evolving"
+		"fresh"
+		"freshness"            \\ \hline
+		SW    & "knowledge graphs"
+		"linked data" \\ &
+		"linked $\cup$ open $\cup$ data"
+		"linked open data" \\ &
+		"LOD"
+		"RDF"
+		"sparql"           \\ \hline
+	\end{tabular}
+\end{table}
 
-Google scholar
+%\textbf{Resources}\label{Resources}
 
-\textbf{Expansion Policy}\label{Expansion}
-
-Snow Booling and references
-
+Our search strategy consists of 6 phases until the final articles are obtained. In the first phase, we search on Google Scholar using our search terms, merging and removing duplicates from the lists of candidate documents; In the second phase, we made a limited filter by scanning the titles of the articles based on our inclusion and exclusion criteria; In the third phase, we apply a slightly deeper filter by reviewing the abstracts of the articles; in the fourth phase, we filter by the body relevance of the article; In the fifth phase, we expand our set of relevant works including those works referred into the related work, also the works citing the most relevant documents, and also documents written by the most prominent authors; finally, in the sixth phase, these last documents incorporated in the expansion phase are filtered by the body relevance of the article. Figure~\ref{fig:methodology} presents the number of documents considered for each phase of the methodology.
 
 \section{Data Dynamics}\label{Data}
-~\cite{DividinoGSG14,NishiokaS15,StefanidisFCR16,NishiokaS16,KaferWA17,NishiokaS18,GonzalezH18}
 
 By analyzing some of the most used LOD datasets we can see a clear trend in growth expressed for example in the size, but in this Section, we are interested in the dynamics of that evolution. To query continuously evolving linked datasets, it is useful to understand how datasets (or parts of them) evolve, and how this evolution is related to the data itself, to measure, analyze, and predict data evolution.
 
 Being able to understand and characterize change is important for many practical reasons. When applications locally store descriptions that originate from various remote datasets, awareness of the changes that such descriptions undergo at their origin allows for timely updates, and hence delivering services based on fresh information. Also, an understanding of a dataset's pace of change can inform a decision as to whether an application will cache its content locally, or remotely query it on the fly~\cite{UmbrichKHP12, ekawUmbrichKHP12}.
 
-Table~\ref{tab:dyn} shows surveyed works relating to the understanding of dataset dynamics. In this Section, we describe the main approaches to detect change at certain granularity levels and to perform complex analysis to capture patterns and metrics that allow for characterizing, measuring, and understanding the dynamics of a dataset.
+Given its importance, not a few authors have been concerned with studying the data dynamics with the hope put in the hypothesis that it is possible to predict certain events from observing the previous ones and inferring semantic and context rules. However, on the way to understanding the dynamics they make decisions such as the choice of the dataset, the definition of dynamics and the selection of a methodology to follow.
+
+With respect to the choice of the dataset, it faces the determination of domain, size, completeness, veracity and availability of historical information. With respect to the definition of dynamics, everyone agrees that it is a function of the changes and time, and that is where the distinctions begin between objects to observe the changes (for example, statements, entities, schema, domain, etc.) and the discretization of the time or frequency to observation of changes (for example, hourly, daily, weekly, etc.). For the determination of the methodology, there are variations in the methods used, nevertheless, we distinguish the presence of qualitative and quantitative approaches. Qualitative approaches attempt to detect changes at different levels of complexity according to their definition of dynamics while quantitative approaches attempt to measure change and dynamicity using math functions.
+
+Hereinafter, we explain each of these edges in detail, we describe the main approaches to detect change at certain granularity levels and to perform complex analysis to capture patterns and metrics that allow for characterizing, measuring, and understanding the dynamics of a dataset. At the end, with a general discussion of the achievements and open questions.
 
 As we mention before, the standard approach to represent data published as LD is RDF. It is a graph-structured model based on three disjoint sets of terms: IRIs (\textbf{I}), literals (\textbf{L}), and blank nodes (\textbf{B}). The information is organized into triples $(s,p,o) \in$ \textbf{I} $\cup$ \textbf{B} $\times$ \textbf{I} $\times$ \textbf{I} $\cup$ \textbf{B} $\cup$ \textbf{L}, where $s$ is called subject, $p$ is called predicate, and $o$ is called object. 
 
-\subsection{Dynamic Datasets}\label{Datasets}
-~\cite{KaferUHP12,KaferAUOH13,NishiokaS15,MeimarisP16}
+\subsection{Versioned Datasets}\label{Datasets}
 
-To understand the dynamics of a data source, information about the historical evolution of that data source is needed, but is rarely accessible. For this reason, a number of datasets have been developed and used for research on how LD data sources change over time. Table \ref{tab:dyn}, column $DataSets$ shows some of the datasets that are used, some of them have been created especially for this purpose (DyLDO), while others are datasets that have naturally evolved and where it is possible to access historical changes (Wikidata, DBpedia, etc.). There are also tools that allow for building this historical data (Multicrawler, LDSpider).
+To understand the dynamics of a data source, information about the historical evolution of that data source is needed, but is rarely accessible. For research on how LD data sources change over time it is desirable to be cross-domain, contiguous, frequent and real-world data, also large-scale, diverse and dynamic. We show what that means:
 
-One of the datasets built to study the dynamics of the data is DyLDO \footnote{http://swse.deri.org/dyldo/data/} and it is used in several studies. It has been created monitoring a fixed set of Linked Data documents (and their neighborhood) on a weekly basis~\cite{KaferUHP12, KaferAUOH13}. As of June 9, 2018, it is composed of 247 weekly snapshots corresponding to a period from May 2012 to January 2017. Furthermore, the DyLDO dataset contains samples of various well known and large LOD sources, e.g., dbpedia.com, musicbrainz.com, and bbc.co.uk, as well as less commonly known ones, e.g., advogato.org, statistics.data.gov.uk, and uefa.status.net. Using the weekly crawls obtained from the DyLDO dataset, one can only analyze changes occurring between consecutive weeks (e.g., daily changes cannot be considered).
+\begin{itemize}
+	
+\item \textbf{cross-domain:} capturing a wide selection of Linked Data domains;
+\item \textbf{contiguous:} access to consecutive snapshots without holes;
+\item \textbf{frequent:} short time between snapshots;
+\item \textbf{real-world:} not synthetic data; 
+\item \textbf{large-scale:} large number of elements;
+\item \textbf{diverse:} suitable for studying for a wide range of applications;
+\item \textbf{dynamic:} large changes between versions.
 
-Other datasets used, correspond to cross-domain Knowledge Graphs (KG), such as Wikidata. Wikidata~\cite{VrandecicK14} is a large, open cross-domain KG started in October 2012 hosted by the Wikimedia Foundation and it is used by Wikimedia projects, such as Wikipedia. It contains structured information and it is maintained collaboratively by volunteer editors who generate continuous changes. Furthermore, due to the shutdown of Freebase\footnote{http://www.freebase.com}, a popular Knowledge Graph run by Google, data in Freebase have been migrated into Wikidata. Thus, Wikidata is expected to be used in many applications. It is possible to obtain the snapshots from the Wikidata RDF exports\footnote{https://dumps.wikimedia.org/wikidatawiki/entities/} on a weekly basis.
+\end{itemize}
 
-Another alternative is to use crawling software, such as LDSpider~\cite{IseleUBH10} or the MultiCrawler \cite{HarthUD06} framework to crawl from an initial list of URLs. This produces quad data obtained from dereferencing the seed URIs. The quads contain the triples from the download, with the fourth context position indicating the URI of the information resource from which the triple was downloaded (i.e. the source of the triple).
+We found that there are not many linked versioned datasets with all of these features. For this reason, a number of datasets have been developed and used for research on how LD data sources change over time. 
+
+Umbrich et al.~\cite{UmbrichHHPD10} created a small one consisting of 24 weekly snapshots of RDF Web data used to analyze changes in documents. However, the recovery strategy allowed incomplete changes history for some documents. It is wished monitor the same objects in each version.
+
+The better enforce found was DyLDO, which have been created especially for this purpose\footnote{http://km.aifb.kit.edu/projects/dyldo/data/} and it is used in several studies. It has been created monitoring a fixed set of Linked Data documents (and their neighborhood) on a weekly basis~\cite{KaferUHP12, KaferAUOH13}. As of march 3rd, 2020, it is composed of 399 weekly snapshots corresponding to a period from May 6, 2012 to March 1st, 2020 (both inclusive). Furthermore, the DyLDO dataset contains samples of various well known and large LOD sources, e.g., dbpedia.com, musicbrainz.com, and bbc.co.uk, as well as less commonly known ones, e.g., advogato.org, statistics.data.gov.uk, and uefa.status.net. Using the weekly crawls obtained from the DyLDO dataset, one can only analyze changes occurring between consecutive weeks (e.g., daily changes cannot be considered).
+
+Some of the datasets that are used, some of them  (), while others are datasets that have naturally evolved and where it is possible to access historical changes (Wikidata, DBpedia, etc.). There are also tools that allow for building this historical data (Multicrawler, LDSpider).
+
+Other datasets used, correspond to cross-domain Knowledge Graphs (KG) that have naturally evolved and where it is possible to access historical changes, such as Wikidata and DBpedia. Wikidata~\cite{VrandecicK14} is a large, open cross-domain KG started in October 2012 hosted by the Wikimedia Foundation and it is used by Wikimedia projects, such as Wikipedia. It contains structured information and it is maintained collaboratively by volunteer editors who generate continuous changes. Furthermore, due to the shutdown of Freebase\footnote{http://www.freebase.com}, a popular Knowledge Graph run by Google, data in Freebase have been migrated into Wikidata. Thus, Wikidata is expected to be used in many applications. It is possible to obtain the snapshots from the Wikidata RDF exports\footnote{https://dumps.wikimedia.org/wikidatawiki/entities/} on a weekly basis. 
+
+DBpedia, on the other hand, is a project whose objective is to extract structured content from the information created in the Wikipedia project. Historical information is available \footnote{https://wiki.dbpedia.org/develop/datasets}. However, new releases require manual effort and therefore are not very up to date. DBpedia Live is a DBpedia-based project that processes the hundreds of editions per minute that are generated in wikipedia to provide a constant stream of updates for DBpedia. 
+
+Another alternative is to use crawling software, such as LDSpider~\cite{IseleUBH10} or the MultiCrawler~\cite{HarthUD06} framework to crawl from an initial list of URLs. This produces quad data obtained from dereferencing the seed URIs. The quads contain the triples from the download, with the fourth context position indicating the URI of the information resource from which the triple was downloaded (i.e. the source of the triple).
+
+The last option is to use synthetic data~\cite {MeimarisP16}, which is not useful to study dynamics patterns but to evaluate tools involved such as change detection and archiving.
 
 \subsection{Granularity Levels}\label{Granularity}
-~\cite{UmbrichVH10,UmbrichHHPD10,DividinoSGG13,KaferAUOH13}
 
-When considering a set of LOD sources, undoubtedly some of them change more or less often than others~\cite{KaferAUOH13, DividinoGSG14}. For example, it is not likely that in a short interval of time each source of LOD will change, so it is not necessary to obtain fresh data from static sources. However, when data from a source changes, an update is required. Consequently, some sources must be refreshed at shorter or longer time intervals. This implies that each source of LOD can be assigned a different update importance, which is based on its change behavior. Similarly, within the sources, we may observe different change behavior from different points of view or granularity levels [GL], such as changes involving concepts, properties, or triples.
+When considering a set of LOD sources, undoubtedly some of them change more or less often than others~\cite{KaferAUOH13, DividinoGSG14}. For example, it is not likely that in a short interval of time each source of LOD will change, so it is not necessary to obtain fresh data from static sources. However, when data from a source changes, an update is required. Consequently, some sources must be refreshed at shorter or longer time intervals. This implies that each source of LOD can be assigned a different update importance, which is based on its change behavior. Similarly, within the sources, we may observe different change behavior from different points of view or granularity levels, such as changes involving concepts, properties, or triples.
 
 In more detail, we found works analyzing change behavior at the following levels:
 \begin{itemize}
-	\item d Dataset level - the document (RDF Graph) changed 
-	\item r Resource level - the entity (URI) description changed 
-	\item s Statement level - the statement (RDF triple) was deleted or added
-	\item sh Schema level - the property and classes changed
+	\item \textbf{d} \textit{Dataset}: the document (RDF Graph) changed;
+	\item \textbf{r} \textit{Resource}: the resource (URI) changed;
+	\item \textbf{s} \textit{Statement}: the statement (RDF triple) was deleted or added;
+	\item \textbf{e} \textit{Entity}: the description of a resource (properties) changed;
+	\item \textbf{sh} \textit{Schema}: the property and classes changed;
+	\item \textbf{q} \textit{Query result}: the result of specific query changed;
+	\item \textbf{D} \textit{Domain}: the document of specific domain (PLD) changed.
 \end{itemize}
 
-The works surveyed declare the level of granularity to study dataset evolution. Some approaches are general and do not depend on the object to be studied. The authors agree on the definitions at the statement level, but in the case of resource and schema, there are some variations.
+The works surveyed declare the level of granularity to study dataset evolution. Some approaches are general and do not depend on the object to be studied. The authors agree with the definitions at most levels, but in the case of entity and scheme, there are some variations.
 
-With respect to resources, some works consider an entity's description as the set of triples containing that entity as subject~\cite{UmbrichKL10, NishiokaS15, NishiokaS16, GonzalezH18, DividinoSGG13} and others also consider the set of triples containing $e$ as an object~\cite{UmbrichHHPD10, NishiokaS16}.
+With respect to entity, some works consider an entity's description as the set of triples containing that entity as subject~\cite{UmbrichKL10, NishiokaS15, NishiokaS16, GonzalezH18, DividinoSGG13} and others also consider the set of triples containing $e$ as an object~\cite{UmbrichHHPD10, NishiokaS16}.
 
-In the case of the schema, some authors study the schema signature of documents involving only predicates~\cite{GonzalezH18} and also values for rdf:type~\cite{KaferAUOH13, KaferWA17, DividinoSGG13}. Other works analyze changes in the usage of the vocabulary terms using the concept of $Characteristic$ $Sets$ proposed by Neumann and Moerkotte~\cite{NeumannM11}.
+In the case of the scheme, some authors study the evolution of the schema taking into account the independent terms used as predicates or classes~\cite{KaferAUOH13, KaferWA17}, others~\cite{DividinoSGG13, GonzalezH18} use the signature of the scheme of documents involving predicates and classes using the concept of $Characteristic$ $Sets$ proposed by Neumann and Moerkotte~\cite{NeumannM11} or changes in their use $Mapping$ $Sets$~\cite{DividinoSGG13}.
 
 \subsection{Change Metrics}\label{Detection}
-~\cite{PopitschHR10,UmbrichVH10,UmbrichHHPD10}
 
 To understand the dynamics of the datasets, one of the approaches followed is quantitative. For this, it is necessary to define a measure to quantify the changes that have occurred between two versions of an object.
 
@@ -275,14 +382,28 @@ Equation~\ref{eq:Inequality} and Equation~\ref{eq:Jaccard} consider the objects 
 
 It is desired to compare RDF content, not document syntax; thus, the comparison is complicated by the presence of blank nodes. For example, to check if the content of an RDF graph with blank nodes has changed over time it is necessary to check graph isomorphism between RDF graphs. This is difficult, because of the size of the graphs and the complexity of the task, so some works filter out triples that contain a blank node from the snapshots~\cite{NishiokaS18, KaferAUOH13} while others detect isomorphisms among RDF graphs from different snapshots and replace the blank nodes by URIs~\cite{UmbrichHHPD10}, using hash-based skolemization as per the approach described by Hogan in~\cite{Hogan15}.
 
-In some case, the number of changes observed in the two snapshots does not reflect the entire history of changes that occurred between them. To quantify the evolution of a dataset it is necessary to take into consideration the changes occurring over a period of time. Dividino et al.~\cite{DividinoGSG14} define dynamics as an aggregation of changes (see Equation~\ref{eq:dyn}), built on top of contemporary change metrics $\delta$ (see Equation~\ref{eq:Inequality}-\ref{eq:Euclidean}). They understand a period of time as a continuous time interval beginning at an initial point in time $t_1$ up to a final one $t_n$ and defined the dynamics of a dataset as the integration of its change rate over time. Due to this time-dependence, a measure for dynamics should capture the frequency, degree, and regularity of the data changes. However, also the change rate function is not explicitly known, and cannot be used for the computation, i.e., it is not possible to determine the change rate of a dataset for a given point in time. Thus, their idea is to use an approximation based on discrete points in time and the changes between the datasets at these times (see Equation~\ref{eq:dyn}).
+The number of changes observed in the two snapshots does not reflect the entire history of changes that occurred between them. To quantify the evolution of a dataset it is necessary to take into consideration the changes occurring over a period of time. Dividino et al.~\cite{DividinoGSG14} define dynamics as an aggregation of changes (see Equation~\ref{eq:dyn}), built on top of contemporary change metrics $\delta$ (see Equation~\ref{eq:Inequality}-\ref{eq:Euclidean}). They understand a period of time as a continuous time interval beginning at an initial point in time $t_1$ up to a final one $t_n$ and defined the dynamics of a dataset as the integration of its change rate over time (see Figure~\ref{fig:d1}). Due to this time-dependence, a measure for dynamics should capture the frequency, degree, and regularity of the data changes. However, also the change rate function is not explicitly known, and cannot be used for the computation, i.e., it is not possible to determine the change rate of a dataset for a given point in time. Thus, their idea was to use an approximation based on discrete points in time and the changes between the datasets at these times (see Equation~\ref{eq:dyn} and Figure~\ref{fig:d2}).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.4]{d1.png}
+	\caption{The dynamics as an integration of a continuous change function over time~\cite{DividinoGSG14}.}
+	\label{fig:d1}
+\end{figure}
 
 \begin{equation}
 \label{eq:dyn}
-\Theta(X)^{t_n}_{t_1} = \sum_{i = 2}^{n} \delta_{function}(X_{t_i}, X_{t_{i-1}})
+\Theta(X)^{t_n}_{t_1} = \sum_{i = 2}^{n} \delta_{metric}(X_{t_i}, X_{t_{i-1}})
 \end{equation}
 
-Some frameworks~\cite{DividinoGSG14, KnuthHS16} extend this notion (see Equation~\ref{eq:dyn:decay}) incorporating a decay function within the dynamics computation to differentiate the changes depending on when they occurred in the observed time interval using the exponential function (see Equation~\ref{eq:decay}) as an aging factor ($\lambda$). This is useful for applications where changes tend to be less or more important as time passes.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.3]{d2.png}
+	\caption{The dynamics as aggregation of $\delta_{metric}$~\cite{DividinoGSG14}.}
+	\label{fig:d2}
+\end{figure}
+
+However, for most applications, the changes tend to be less important as time goes by, for example, if a dataset used to change a lot but no longer does, it may be necessary to adapt its index update strategy. For this purpose, some frameworks~\cite{DividinoGSG14, KnuthHS16} extend this notion (see Equation~\ref{eq:dyn:decay}) incorporating a decay function within the dynamics computation to differentiate the changes depending on when they occurred in the observed time interval using the exponential function (see Equation~\ref{eq:decay}) as an aging factor ($\lambda$).
 
 \begin{equation}
 \label{eq:decay}
@@ -291,12 +412,16 @@ f(i) = e^{-\lambda (n-i)}
 
 \begin{equation}
 \label{eq:dyn:decay}
-\Theta_{decay}(X)^{n}_{1} = \sum_{i = 2}^{n} f(i) \delta_{function}(X_{i}, X_{i-1})
+\Theta_{decay}(X)^{n}_{1} = \sum_{i = 2}^{n} f(i) \delta_{metrics}(X_{i}, X_{i-1})
 \end{equation}
 
 \subsection{Change Detection}
 
+In the qualitative approach, rather than measuring how much the datasets have changed, we care to understand their evolution by finding and analyzing the differences between different versions of the data. 
+
 The information of how a certain data unit has changed is typically expressed by operations, $add$ and $deleted$ being the atomic (low-level)~\cite{UmbrichHHPD10} ones. From a set of atomic operations, one can derive so-called compound changes or even higher-level changes~\cite{PapavasileiouFFKC13}.
+
+Simple changes are intended to capture fine granularity types of evolution and must be defined to meet the formal requirements of completeness and unambiguity to ensure a correct detection process~\cite{PapavasileiouFFKC13}. 
 
 Managing changes poses several research problems, including the problem of detecting the changes ($delta$) between versions of the same dataset. This approach is followed to understand what is changing and what transformations are happening in the data.
 
@@ -310,11 +435,18 @@ The low-level change detection of a document or entity between two snapshots $t$
 	\item trigger a detection of the change (either w.r.t. a document or entity) as soon as the order of the statements differs between two snapshots (e.g., new statements were added or removed).
 \end{enumerate}
 
-The representation of changes in the triplet level leads to a syntactic delta, which does not adequately capture the intention behind a change and generates results that are not intuitive enough for the human user. So, a high-level language is preferable to a low-level one in terms of human interpretability, because it is more intuitive, concise, and closer to human intuition, thereby capturing the semantics of a change more accurately.
+The representation of changes in the triplet level leads to a syntactic delta~\cite{ZeginisTC11}, which does not adequately capture the intention behind a change and generates results that are not intuitive enough for the human user. So, a high-level language is preferable to a low-level one in terms of human interpretability, because it is more intuitive, concise, and closer to human intuition, thereby capturing the semantics of a change more accurately.
 
-High-level change operations describe more complex semantic changes~\cite{PapavasileiouFFKC13}, \cite{RoussakisCSFS15} that are related with several low-level changes. However, detecting high-level change operations incurs a number of issues related to machine-interpretability. For this reason, detecting them becomes more difficult.
+Some works proposed methods~\cite{PapavasileiouFFKC13}, \cite{RoussakisCSFS15} to achieve high-level changes from low-level ones. They understand high-level changes as real-world actions, which often require several low-level changes.
 
-Some works proposed methods~\cite{PapavasileiouFFKC13}, \cite{RoussakisCSFS15} to achieve high-level changes from low-level ones. They understand high-level changes as real-world actions, which often require several low-level changes; for example, the incorporation of a player to a soccer team, could involve the addition of several triples with player data and the association to the team.
+High-level change operations describe more complex semantic changes~\cite{RoussakisCSFS15} that are related to several low-level changes. However, the detection of high-level change operations involves a series of problems related to the machine-interpretability. For this reason, detecting them becomes more difficult. Then, they defined a high-level and low-complexity type of changes called simple changes. Figure~\ref{fig:cd} shows an example of the different types of complexity of the changes that can be extracted from two versions of an RDF dataset. For example, the incorporation of a player to a soccer team, could involve the addition of several triples with player data and the association to the team.
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=0.3]{cd.png}
+	\caption{From de snapshots to the changes~\cite{RoussakisCSFS15}.}
+	\label{fig:cd}
+\end{figure*}
 
 \subsection{Change Descriptions}\label{Descriptions}
 ~\cite{PopitschHR10,UmbrichVH10,SandersonS12,MeimarisP16}
@@ -323,7 +455,7 @@ When dealing with dataset dynamics, we need a way to describe how dynamic a data
 
 The Dataset Dynamics group\footnote{https://www.w3.org/wiki/DatasetDynamics} lists a number of vocabularies for representing dataset changesets and updates, such as The Talis Changeset vocabulary\footnote{http://vocab.org/changeset/schema.html}, Delta vocabulary\footnote{https://www.w3.org/2004/delta} and Triplify Update vocabulary\footnote{http://triplify.org/vocabulary/update}. In a more recent work Ellefi et al.~\cite{Ellefi17} survey other proposals, such as the Revision Management Ontology (RMO)~\cite{GraubeHU14} and the Dataset Dynamics (DaDy) vocabulary\footnote{http://vocab.deri.ie/dady}.
 
-To capture specific characteristics and observations related to dynamics and evolution, some vocabularies are shown in Table~\ref{tab:vocab}. We have classified the vocabularies according to their description capacity. We have classified the vocabularies according to their description capacity. The first, Change, addresses the description of the change at a certain level and the second, Dynamics, allows the editors to characterize the change with a temporal dimension, e.g., frequency.
+To capture specific characteristics and observations related to dynamics and evolution, Table~\ref{tab:vocab} show we some vocabularies, format and ontologies used. We have classified the vocabularies according to their description capacity. We have classified according to their description capacity. The first, Change, addresses the description of the change at a certain level and the second, Dynamics, allows the editors to characterize the change with a temporal dimension, e.g., frequency.
 
 % Table generated by Excel2LaTeX from sheet 'Hoja2'
 \begin{table}[htbp]
@@ -332,52 +464,97 @@ To capture specific characteristics and observations related to dynamics and evo
 	\begin{tabular}{lcc}
 		\hline
 		Works & Change & Dynamics \\ \hline
-		Changeset \cite{Tunnicliffe05} & \cmark   & \\
 		Delta \cite{Berners04} & \cmark   & \\
-		DSNotify Eventset \cite{PopitschH11} & \cmark   & \\
-		Dady \cite{Dady10} &    & \cmark \\
-		RMO \cite{GraubeHU14} & \cmark   &  \\
+		Talis Changesets \cite{Tunnicliffe05} & \cmark   & \\		
+		OWL 2 \cite{PalmaHCG08} & \cmark   &  \\
+		CHAO \cite{NoyCLM06} & \cmark   & \\	
 		Semantic SiteMaps \cite{CyganiakSDDT08} &    & \cmark \\
+		Triplify Update \cite{AuerDLHA09} & \cmark   & \\	
+		Dady \cite{Dady10} &    & \cmark \\
+		Graph Update Ontology (GUO)\footnotemark	 & \cmark   &  \\
+		DSNotify Eventset \cite{PopitschH11} & \cmark   & \\		
+		RMO \cite{GraubeHU14} & \cmark   &  \\	
+		Ontology of Changes \cite{RoussakisCSFS15} & \cmark   &  \\
+		RDF Patch\footnotemark  & \cmark   &  \\ 
+		$O^{DE}$ \cite{PernelleSMT16} & \cmark   &  \\ 
 		\hline
 	\end{tabular}%
 	\label{tab:vocab}%
 \end{table}%
 
-\subsection{Change Propagation}\label{Propagation}
-~\cite{UmbrichVH10,UmbrichHHPD10,SandersonS12}
+\footnotetext{http://purl.org/hpi/guo\# }
+\footnotetext{http://afs.github.io/rdf-patch/ }
 
-\subsection{System Summary}\label{System1}
+
+\subsection{Summary}\label{Summary1}
+
+Table~\ref{tab:dyn} provides an overview of the techniques (previously discussed) used by the systems to address the study of datasets dynamics. As you can see, in this section we include those documents that study different datasets from the temporal perspective, we include, the datasets and the unit they study; the metric used in case of quantitative analyzes, or the type of change detected and represented. Based on these criteria, we have excluded those works with important theoretical contributions to the dynamics techniques but that do not have a specific analysis over a concrete dataset.
+
+In this table, \textbf{Year} corresponds to the year of publication, \textbf{Granularity} specifies the basic unit of study, for example statements or entities, which are the most used, \textbf{Datasets} reference the data sets used in the study. For quantitative analyzes, the metrics used under the \textbf{Metric} column are shown, while for the qualitative ones the \textbf{Detection} column is provided with the different types of events detected and in some cases represented using a format or vocabulary for their \textbf{Description}.
 
 % Table generated by Excel2LaTeX from sheet 'Hoja1'
 \begin{table*}[]
 	\centering
-	\caption{overview of data dynamics approaches.}
+	\caption{Overview of data dynamics approaches.}
 	\label{tab:dyn}
-	\begin{tabular}{lrlrrrrrlll}
+	\begin{tabular}{lrlllcr}
 		\hline
-		Works & \multicolumn{1}{l}{Year} & Granularity   & Delta & Description & Propagation & Distance & Datasets \\ \hline
-		Umbrich et al. \cite{UmbrichHHPD10} & 2010 & d, r   & low  & & & Inequality  & MultiCrawler \\
-		Popitsch et al. \cite{PopitschHR10,PopitschH10,PopitschH11} & 2010 & r & low & DSNotify Eventset  &  & Inequality  & DBpedia, IIMB\footnotemark \\
-		Umbrich et al. \cite{UmbrichKL10} & 2010 & r   & low  & &  & Inequality  & LDSpider \\
-		K{\"{a}}fer et al. \cite{KaferAUOH13} & 2013 & d, s, sh   & low  &  & &  & LDSpider \\
-		Dividino et al. \cite{DividinoSGG13} & 2013 & sh  & low  &  & &  & DyLDO \\
-		Papavasileiou et al. \cite{PapavasileiouFFKC13} & 2013 & s   & high &  & &  & CIDOC, GO, MO \\
-		Dividino et al. \cite{DividinoGSG14} & 2014 & d &  & & & Jaccard & DyLDO \\
-		Nishioka and Scherp \cite{NishiokaS15} & 2015 & r & & & & Jaccard & DyLDO \\
-		Roussakis et al. \cite{RoussakisCSFS15} & 2015 & d   & high &  & &  & DBpedia, FMA, EFO \\
-		Nishioka and Scherp \cite{NishiokaS16} & 2016 & r   &  & &  & Cosine, Euclidean & DyLDO \\                
-		K{\"{a}}fer et al. \cite{KaferWA17} & 2017 & d, s, sh   & low  &  & &  & LDSpider \\
-		Gonz\'{a}lez and Hogan \cite{GonzalezH18} & 2018 & sh, r   & high  &  & &  & Wikidata \\
-		Nishioka and Scherp \cite{NishiokaS18} & 2018 & d   & low  &  & &  & Wikidata \\
+		Works & \multicolumn{1}{l}{Year} & Granularity & Metric  & Detection & Description  & Datasets \\ \hline
+		Umbrich et al. \cite{UmbrichHHPD10} & 2010 & d, e, D &  & low (c, r, u)   &    & MultiCrawler \\
+		Popitsch et al. \cite{PopitschHR10,PopitschH10,PopitschH11} & 2010 & s, r & & low (c, r, u, m) & DSNotify Eventset & DBpedia, IIMB\footnotemark \\
+		Umbrich et al. \cite{UmbrichKL10} & 2010 & r &  & low (c, r, u)  & & LDSpider \\
+		K{\"{a}}fer et al. \cite{KaferAUOH13} & 2013 & d, s, sh, D &  & low (c, r)   &  & LDSpider \\
+		Dividino et al. \cite{DividinoSGG13} & 2013 & sh, e &  & low (c, r, u(e))  &   & DyLDO \\
+		Papavasileiou et al. \cite{PapavasileiouFFKC13} & 2013 & s &  & high &    & CIDOC, GO, MO \\
+		Dividino et al. \cite{DividinoGSG14} & 2014 & s & Jaccard &  &  & DyLDO \\
+		Nishioka and Scherp \cite{NishiokaS15} & 2015 & e, D & Jaccard &  & & DyLDO \\
+		Roussakis et al. \cite{RoussakisCSFS15,StefanidisFCR16} & 2015 & s &  & high (s, c) & Ontology of Changes  & DBpedia \\
+		Pernelle et al. \cite{PernelleSMT16} & 2016 & s &  & low (c, r) & Ontology $O^{DE}$   & DBpedia, FMA, EFO \\
+		Nishioka and Scherp \cite{NishiokaS16} & 2016 & e, D & Cosine, Euclidean &  &   & DyLDO \\  
+		Knuth et al. \cite{KnuthHS16} & 2016 & q & Inequality &  &  & DBpedia live \\  
+		K{\"{a}}fer et al. \cite{KaferWA17} & 2017 & d, s, sh &  & low (c, r)  & DyLDO  Model  & DyLDO \\
+		Akhtar et al. \cite{AkhtarAL17} & 2017 & q & Inequality &  &   & DyLDO \\ 
+		Gonz\'{a}lez and Hogan \cite{GonzalezH18} & 2018 & sh, e &  & high  &  & Wikidata \\
+		Nishioka and Scherp \cite{NishiokaS18} & 2018 & s &  & low (c, r)  &  & Wikidata \\
+		Moya and Hogan \cite{LoustaunauH19} & 2019 & q & $Jaccard^*$ &  &  & Wikidata \\
 		\hline
 	\end{tabular}%
 \end{table*}%
 
 \footnotetext{ISLab Instance Matching Benchmark~\cite{FerraraLMV08} }
 
-\subsection{Summary}\label{Summary1}
+	\begin{description}
+	\item[Umbrich et al. \cite{UmbrichHHPD10}]  analyzed 24 data dumps collected by weekly snapshots of the LOD cloud to understand how the LOD datasets change and what sensible measures there are to accommodate dataset dynamics. They proposed a framework to detect and measure dataset dynamics detecting change at Document and Entity levels, and they presented statistics on the detection of low-level changes that effectively verified the dynamism of the entities. They also showed that it is not feasible to use HTTP headers to detect changes due to the lack of this information. In addition, they could not verify that the frequency of the change followed the Poisson Process change model, because they had an incomplete change history. Although the datasets studied were not very large, the period studied was brief and the authors did not perform a very extensive analysis of patterns of change, this work constitutes a general scheme that can be reused.
+	
+	\item[Umbrich et al. \cite{UmbrichKL10}] set out to understand what correlations between resources and their dynamics can be identified using methods from Data Mining (DM), Machine Learning (ML), and graph analysis. They propose a framework to categorize LOD resources with respect to their dynamics behavior, defining dynamics by features, monitoring four different events (appears, disappear, change, and no change) and then they used k-means clustering. Although their experiments use a small history of changes, the main value of their work was their motivation and initial ideas to study the dataset dynamics of the LOD Web using ML and DM approaches.
+	
+	\item[K{\"{a}}fer et al. \cite{KaferAUOH13}] investigated how stable documents were over time and what kinds of changes were most frequently encountered. They did a comprehensive analysis of various monitoring, detecting, and counting changes over LOD sources in 29 consecutive weeks. They contributed mainly in two important ways, building an important dataset (DyLDO) and presenting many statistics about stability, lifespan, frequency, and types of change at different granularity levels. They also found important patterns like that dynamicity tended to follow certain predictive patterns for Pay Level Domains (PLD), that many documents did not change over long periods, and found that many domains were considered static (and thus are candidates for long-term caching). They also identified particular predicates whose triples should not be cached due to high rates of updates.
+	
+	\item[Dividino et al. \cite{DividinoSGG13}] studied how dynamic is the use of the vocabularies in the cloud. They investigated the dynamics of the schema w.r.t. its usage in a more high-level way: the URI representing some entity, is described by a set of properties and a set of types applying the notion of Extended Characteristic Sets (ECS). They found that even though the vocabulary itself does not change very much, its use does change. Their work offered an early investigation of different metrics applied to schema information and provided a quantitative analysis on the schema information of the DyLDO dataset even though they do not identify patterns of schema changes to use as indicators for predictions.
+	
+	\item[Papavasileiou et al. \cite{PapavasileiouFFKC13}] studied the problem of detecting the changes (delta) between versions of the same KG and proposed a change language that can describe unambiguously any possible change encountered in curated KGs expressed in RDF(S), and that can be efficiently and deterministically detected in an automated way.
+	
+	\item[Dividino et al. \cite{DividinoGSG14}] proposed a function to measure the dynamics of a LOD dataset, which is defined as the aggregation of absolute, infinitesimal changes, provided by traditional change metrics. They then investigated the dynamic quantification of selected LOD resources from DyLDO dataset.
+	
+	\item[Roussakis et al. \cite{RoussakisCSFS15}] also proposed a framework that enables identifying, analyzing, and understanding these dynamics allowing persistent representation of the detected changes between versions. They understood this evolution by finding and analyzing the differences (deltas) between datasets based on SPARQL queries. Their Framework also allows for the creation of an ontology that offers a persistent representation of the detected changes in a way that permits easy and efficient navigation among versions, deltas, snapshots, or historical queries.
+	
+	\item[Nishioka and Scherp \cite{NishiokaS15, NishiokaS16}] investigated how to determine the temporal patterns of entity dynamics on the cloud. For that they measured the degree of changes of entities between two snapshots; they then represented the dynamics of entities as time series to apply k-means++ clustering and find out temporal patterns of entity dynamics. They also investigated which features of entities control patterns of entity dynamics measuring the relation between some features (Type, Predicates, ECS, PLD) and the dynamics of an entity, finding that the entities that share a common PLD are more likely to change together over time and that the entities that have the same type are more likely to change together.
+	
+	\item[K{\"{a}}fer et al. \cite{KaferWA17}] proposed an RDF model of change descriptions at physical and logical levels. Their model allows for carrying out more comprehensive analyses of dynamic Linked Data in a declarative fashion. They showed the usefulness of their model by repeating analyses of dynamics using SPARQL queries.
+	
+	
+	\item[Gonz\'{a}lez and Hogan \cite{GonzalezH18}]proposed a framework for computing a data-driven schema from large-scale knowledge graphs based on Formal Concept Analysis. They first extract the sets of properties associated with individual entities; these property sets (aka. characteristic sets) are annotated with cardinalities and used to induce a lattice based on set-containment relations. Then one can use this framework to model and predict the dynamic behavior of Knowledge Graphs by computing changes between lattices.
+	
+	\item[Nishioka and Scherp \cite{NishiokaS18}] developed classifiers for assessing whether changes on a KG were correct by exploiting the features from KG evolution analysis. They analyzed how KGs evolve over time monitoring how useful were some topological features of the KG for change verification.
+	
+	
+\end{description}
+
 \subsection{Open Questions}\label{Open1}
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci. In hac habitasse platea dictumst.
 
 \section{Archiving Policies}\label{Archiving}
 ~\cite{SandersonS12,Papastefanatos13,MeimarisPPGS14}
@@ -385,13 +562,12 @@ To capture specific characteristics and observations related to dynamics and evo
 \subsection{RDF Archives}\label{Archives}
 \subsection{Query Types}\label{Types}
 \subsection{RDF Archive Benchmarks}\label{Benchmarks}
-
 \subsection{System Summary}\label{System3}
 \subsection{Summary}\label{Summary3}
 \subsection{Open Questions}\label{Open3}
 
 
-\section{Synchronization}\label{Index}
+\section{Synchronization}\label{Index}ls
 
 We have seen in the previous section that the Web of Data is dynamic, that Linked Data sources are updated autonomously and that applications must be aware of those changes. In this section, we will study the works and tools developed to allow applications to synchronize their data with those of the sources. Synchronization allows for timely updating, and hence delivering services based on fresh information.
 
