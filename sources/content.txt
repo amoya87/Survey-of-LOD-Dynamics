@@ -1,0 +1,126 @@
+-Link Data growth
+
+The players participating in the Linked Data ecosystem are manifold; for instance, the research community, Web 2.0 portals, and Facebook among others. The research community around Linked Data and its efforts to provide tools for data publishers to share their data as Linked Data. The result of these efforts are several software libraries which convert information from arbitrary formats into RDF, for example: D2R Server3, XLWrap4, Any235, etc. Also, more and more Web 2.0 portals start to expose their data as Linked Data, for example widely used content management systems like Drupal 76 and knowledge management system like SemWiki7, News portal and multimedia domains, such as the New York Times or BBC, publish their articles and programs according to the principles of Linked Data. Moreover, companies adapt to describe their products using the GoodRelation ontology8 which leads to better search results for the major search engines like Google or Yahoo. Governments contribute by integrating their data into the LOD cloud. All these players continuously contribute information to the LOD cloud.
+
+With the increasing use ofWeb 2.0 to create, disseminate, and consume large volumes of data, more and more information is published and becomes available for potential data consumers, that is, applications/services, individual users and communities, outside their production site. The most representative example of this trend is Linked Open Data (LOD), a set of interlinked data and knowledge bases.
+
+With the growing complexity of the Web, we face a completely different way of creating, disseminating and consuming big volumes of information. The recent explosion of the Data Web and the associated Linked Open Data (LOD) initiative has led several large-scale corporate, government, or even user-generated data from different domains (e.g., DBpedia, Freebase, YAGO) to be published online and become available to a wide spectrum of users [21]. 
+
+LOD KBs are continuously evolving for different reasons such as information enrichment and correction, new knowledge generation
+
+-Dynamic challenges
+
+Such curated Knowledge Bases (KBs) are constantly evolving for various reasons, such as the inclusion of new experimental evidence or observations, or the correction of erro- neous conceptualizations.
+
+Furthermore, data publishers continuously try to improve the quality of their data by changing vocabularies, adding new information and relations, or deleting obsolete ones
+
+Web of Data continues to expand in size, scope and diversity
+
+Changing content available from the same URI is just one illustration of the Web’s dynamics. In addition, resources are continuously created, moved and deleted, linked and unlinked
+
+Applications that access and process Linked Open Data (LOD) are susceptible to changes of the data. The changes may affect applications to various degrees: from irrelevant ef- fects, which have no influence on the data processing in an application, to rather critical changes that make data processing impossible without system adaptations.
+
+Dynamicity is an indispensable part of LOD; LOD datasets are constantly evolving for several reasons, such as the inclusion of new experimental evidence or observations, or the correction of erroneous conceptualizations [22].
+
+-Importance of Dataset dynamics knowledge
+
+One possible threat to linked data quality is the lack of knowledge about the dynamics in dependent remote datasets. Linked data consuming applications often need to be aware of changes in these datasets in order to update local data dependencies.
+
+In order to update their local data dependencies, linked data consuming applications need to know what data unit has changed as well as how and when it has changed.
+
+The dynamics of datasets is one property that may affect data quality: linked datasets evolve over time and client applications that depend on these data need to be aware of changes in order to update their local data dependencies
+
+Establishing a more fine-grained understanding of the nature of Linked Data dynamics is of core importance to publishing, research and development. With regards to publishing, a better understanding of Linked Data dynamics would, for example, inform the design of tools for keeping published data consistent with changes in external data (e.g., [26]). With regards to research, more granular data on Linked Data dynamics would open up new paths for exploration, e.g., the design of hybrid/live query approaches [30] that know when a query relates to dynamic data, and that retrieves fresh results directly from the source. With regards development, for current systems, the results of such studies would inform crawling strategies, local index refresh rates and update strategies, cache invalidation techniques and tuning, and so forth.
+
+Understanding and being able to deal with the constituent datasets’ particular rate of change is essential for delivering accurate responses
+
+Being able to understand and characterize change is important for many practical reasons. When applications locally store descriptions that originate from various remote datasets, awareness of the changes such descriptions undergo at that their origin allows for timely updating, and hence delivering services based on fresh information. Also, an understanding of a dataset’s pace of change can inform a decision as to whether an application will cache its content locally, or remotely query it on the fly. 
+
+Understanding this evolution by finding and analysing the differences (deltas) between datasets has been proved to play a crucial role in various curation tasks, like the syn- chronization of autonomously developed dataset versions [3], the visualization of the evolution history of a dataset [13], and the synchronization of interconnected LOD datasets [15]. Deltas are also necessary in certain applications that require access to previous versions of a dataset to support historical or cross-snapshot queries [20], in order to review past states of the dataset, understand the evolution process (e.g., to identify trends in the domain of interest), or detect the source of errors in the current modelling.
+
+-Dataset dynamics as research topic
+
+Dataset dynamics recently emerged as an active research topic
+
+Dataset dynamics is a term we recently coined [1], essentially addressing content and interlinking changes in Linked Data sources
+
+-Dataset dynamics tasks
+
+detection, propagation, and description
+
+Current research on dataset dynamics in the area of linked data is being conducted along three dimensions:
+1) vocabularies to describe the dynamics and to express the semantics of changes in a dataset.
+2) protocols to propagate change information from linked data servers to clients
+3) applications that detect changes in linked datasets and support clients in maintaining the integrity in their local data dependencies
+
+(1) the design of vocabularies to describe dynamic characteristics and changes of datasets, 
+(2) the auto-discovery of those descriptions, 
+(3) web-scale communication methods for the interaction between consumers and producers for different change granularity levels and 
+(4) algorithms to compute efficiently deltas between two data snapshots.
+
+efficient system for performing live queries over the Linked Open Data Web
+However, aside from this use-case having knowledge about dataset dynamics is essential for a number of tasks:
+• web crawling and caching [9]; 
+• distributed query optimisation [13]; 
+• maintaining link integrity [16]; 
+• servicing of continuous queries [22];
+• replication and synchronisation [24].
+
+These include how to publish, access, archive, store, and query data that’s in flux, as well as how to detect, predict, and communicate change
+
+Generally speaking, change detection is important for dataset synchronization, smart caching, link maintenance, and vocabulary evolution.
+
+The first area addresses the description of change at the dataset level.
+
+
+The second area is concerned with change notifications that could pertain to individual RDF descriptions, entire datasets, or even query results.
+
+-Dataset dynamics in databases
+
+Although, there are some efforts to solve this problem in databases, e.g. [28], [18], and [6], among others; they do not cover all the aspects of the Linked Data datasets.
+
+-Dataset dynamics in web
+
+the study of changes in documents and data sets is very relevant for a broad range of application domains. Earlier work discussed analysis of the dynamics of the Web circa. 2008, leveraging their findings for optimisation of re-indexing techniques [6]. The work of Cho et. al. provides a comprehensive study regarding the change frequency of Web documents: earlier work focussed on how to integrate the knowledge for an incremental crawler [8]; further work provided a detailed discussion for estimators of the frequency of changes given incomplete history [9]. Other research has focused on, for example, investigating the dynamics of Wikipedia articles [3] and the evolution of database schema over time [21]
+
+-Paper why
+
+The Web is in permanent motion, and its dynamics have been the subject of extensive research ever since its inception. In many cases, the focus is on optimizing crawl strategies for search engines as a means of allowing their indexes to reflect the Web’s ever-evolving state in a timely manner. However, the research findings are diverse and substantial, informing the implementation of many other practical applications.
+
+Clearly, one can assume and even observe that Linked Data is very dynamic. However, at the time of writing there is no solid solution nor a clear research direction of the big picture of the problem. There  are a number of use cases, derived requirements and proposals as we will show in this survey. Nevertheless, we can clearly state that none of the available proposals solve the problem of handling and communicating dataset
+
+Despite its importance, the current understanding of change dynamics for the data Web is far less mature than for the document Web
+
+The entire linked data ecosystem’s change dynamics aren’t yet well understood, other than its rapid growth, illustrated by the frequently presented linked data cloud dia- grams. Work in this realm is starting to emerge, however, both at the research and infrastructural levels
+
+-Contribution
+
+(1) a fundamental overview about the topic of dataset dynamics; 
+(2) the presentation of use cases and requirements agreed by the Linked Data community; 
+(3) a survey and comparison of proposals which are addressing the issues and partial solve them; and 
+(4) an abstract dataset dynamics stack.
+
+
+-Questions
+
+How to evaluate the accuracy of an application by consuming linked dynamic data?
+What methods exist to allow applications to consume linked dynamic data?
+
+Change frequency: Can we model change frequency of documents with mathematical models and thus predict future changes?
+                  How LOD datasets change and what sensible measures there are to accommodate dataset dynamics?
+Change patterns: Can we mine patterns that help to categories change behaviour?
+Degree of change: If a document changes, how much of its content is updated?
+                  change volume
+Lifespan: What is the lifespan of Linked Data documents?
+Stability: How stable are Linked Data documents in terms of HTTP accessibility?
+Growth rate: How fast is the Web of Data evolving?
+Structural changes: Do we observe any changes in the structure of the network formed by links?
+Change triggers: Can we find graph patterns that trigger or propagate changes through the network?
+Domain-dependent changes: Do we observe a variation or clustering in dynamicity across different domains?
+Vocabulary-dependent changes: Do we observe different change patterns for data using certain vocabularies, classes or properties?
+Vocabulary changes: How do the semantics of vocabulary terms evolve over time?
+
+For warehouses: Which remote datasets need to be updated most frequently? Which are static and do not need to be refreshed? Are the updates mostly additions or mostly deletions? How often do new documents appear?
+For “live query” engines: Which documents are static and can be cached? Which query patterns involve dynamic patterns (e.g., are foaf:knows triples more dynamic than foaf:name)? For link traversal methods, how often do links change between documents?
+For reasoning engines: Do schema data change more or less often than in- stance data?Which ontologies are the most dynamic? What kinds of seman- tics change? Are changes “monotonic” with respect to entailments? Which data are static and subject to materialisation? Which are dynamic and sub- ject to query-rewriting?
+For publishers: How often do target documents go offline? How often should deadlinks be checked and pruned? How often should certain link-types (e.g., owl:sameAs) be revised for updated remote content? How often do the se- mantics of vocabularies change?

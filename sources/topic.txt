@@ -1,0 +1,13 @@
+-Link Data growth 
+-dynamic challenges
+-Importance of Dataset dynamics knowledge
+-Paper why
+-Dataset dynamics as research topic
+-Dataset dynamics in databases
+-Dataset dynamics in web
+-Dataset dynamics tasks
+-Contribution
+-Use case(example, requirements)
+-Questions
+
+
