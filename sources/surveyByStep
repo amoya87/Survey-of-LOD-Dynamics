@@ -1,0 +1,49 @@
+zenodo.org
+"D:\Trabajo\references\update\refresh.csv"
+"D:\Trabajo\references\update\scheduling.csv"
+"D:\Trabajo\references\update\uptodate.csv"
+"D:\Trabajo\references\update\cache.csv"
+"D:\Trabajo\references\update\change.csv"
+"D:\Trabajo\references\update\dynamics.csv"
+"D:\Trabajo\references\update\evolving.csv"
+"D:\Trabajo\references\update\fresh.csv"
+"D:\Trabajo\references\update\freshness.csv"
+
+"knowledge graphs"
+"linked data"
+linked open data
+"linked open data"
+LOD
+RDF
+sparql
+
+
+
+3150
+
+CREATE TABLE `table 2` AS ( SELECT * FROM `table 1` GROUP BY `Cites`, `Authors`, `Title`, `Year`, `Source`, `Publisher`, `ArticleURL`, `CitesURL`, `Type`, `DOI`, `ISSN`, `CitationURL`, `Volume`, `Issue`, `StartPage`, `EndPage`, `ECC`, `CitesPerYear`, `CitesPerAuthor`, `AuthorCount`, `Age` )
+
+2341
+
+SELECT `Publisher`, COUNT(*) AS c FROM `table 2` GROUP BY `Publisher` ORDER BY c DESC
+Publisher	Google Patents		102
+			books.google.com	52
+			
+CREATE TABLE `table 3` AS (SELECT * FROM `table 2` WHERE `Publisher` != "Google Patents" AND `Publisher` != "books.google.com")
+
+2187
+
+CREATE TABLE `table 4` AS (SELECT * FROM 
+                           (SELECT * FROM `table 3` GROUP BY `CitesURL` HAVING `CitesURL` != "" 
+                            UNION 
+                            SELECT * FROM `table 3` WHERE `CitesURL` = "") AS b
+                          );
+						  
+
+SELECT `Title`,`Year`,`Authors`, COUNT(*) AS c FROM `table 4` GROUP BY `Title`,`Year`,`Authors` ORDER BY c DESC
+
+CREATE TABLE `table 6` AS (SELECT `table 4`.* FROM `table 4` INNER JOIN `table 5` ON `table 4`.`ArticleURL`=`table 5`.`ArticleURL`);
+
+
+
+
