@@ -10,8 +10,13 @@
 %para el simbolo de chequeado
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
 \usepackage{pifont}% http://ctan.org/pkg/pifont
+\usepackage{xcolor}
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
+
+\newcommand{\am}[1]{{\color{green!50!black}\textsc{am:} #1}}
+\newcommand{\ah}[1]{{\color{blue!70!black}\textsc{ah:} #1}}
+\newcommand{\li}[1]{{\color{red!50!black}\textsc{am:} #1}}
 
 %%%%%%%%%%% Put your definitions here
 \newtheorem{example}{Example}
@@ -29,14 +34,7 @@
 
 %\pretitle{}
 \title{Dynamic Linked Data: A Survey}
-\runningtitle{Dynamics on Linked Data: A Survey}
-%\subtitle{}
-
-% For one author:
-%\author{\inits{N.}\fnms{Name1} \snm{Surname1}\ead[label=e1]{first@somewhere.com}}
-%\address{Department first, \orgname{University or Company name},
-%Abbreviate US states, \cny{Country}\printead[presep={\\}]{e1}}
-%\runningauthor{N. Surname1}
+\runningtitle{Dynamic Linked Data: A Survey}
 
 % Two or more authors:
 \author[A]{\inits{A.}\fnms{Alberto} \snm{Moya Loustaunau}\ead[label=e1]{amoya@dcc.uchile.cl}},
@@ -48,27 +46,14 @@ and
 \address[B]{\orgname{University of Southampton},
 Southampton, \cny{UK}\printead[presep={\\}]{e2}}
 
-%\begin{review}{editor}
-%\reviewer{\fnms{First} \snm{Editor}\address{\orgname{University or Company name}, \cny{Country}}}
-%\reviewer{\fnms{Second} \snm{Editor}\address{\orgname{First University or Company name}, \cny{Country}
-%    and \orgname{Second University or Company name}, \cny{Country}}}
-%\end{review}
-%\begin{review}{solicited}
-%\reviewer{\fnms{First} \snm{Solicited reviewer}\address{\orgname{University or Company name}, \cny{Country}}}
-%\reviewer{\snm{anonymous reviewer}}
-%\end{review}
-%\begin{review}{open}
-%\reviewer{\fnms{First} \snm{Open Reviewer}\address{\orgname{University or Company name}, \cny{Country}}}
-%\end{review}
-
 \begin{abstract}
-Linked Open Datasets contain descriptions that change over time. The resources described by these datasets are continuously created, moved, deleted, linked, and unlinked. Applications that leverage Linked Data must be aware of these change dynamics to deliver accurate services. Understanding and being able to deal with dynamic datasets is essential for delivering accurate responses. This has been acknowledged by researchers who responded by suggesting techniques for dealing with Data Dynamics. Despite its importance and the efforts of researchers, the current understanding of change dynamics for Linked Data is still incomplete. Our contribution is a systematic literature review on Dynamic Linked Open Data and gives an overview of the current approaches to detect, propagate, and describe changes in resources and datasets of the Linked Open Data Web, as well as, the approaches proposed to deal with them, identifying respective potentials and limits.
+Linked Open Datasets are often dynamic: the resources described by these datasets are continuously created, moved, modified, deleted, linked, and unlinked. Applications that leverage Linked Data must take these changes into account in order to deliver accurate services over up-to-date data. However, keeping track of such changes, particularly for remote datasets accessible over the Web, can be a costly process. This challenge has been acknowledged by a variety of researchers who have responded by suggesting techniques for dealing with dynamic Linked Data. However, the current understanding of dynamic Linked Data is still incomplete. Our contribution is a systematic literature review on dynamic Linked Data that provides an introduction and overview of the current approaches to describe, detect and propagate changes in Linked Data, as well as approaches proposed to consume dynamic Linked Data, identifying respective potentials and limits. \ah{Revise/extend later.}
 \end{abstract}
 
 \begin{keyword}
 \kwd{Data dynamics}
 \kwd{Synchronization}
-\kwd{Linked Open Data}
+\kwd{Linked Data}
 \end{keyword}
 
 \end{frontmatter}
@@ -79,32 +64,30 @@ Linked Open Datasets contain descriptions that change over time. The resources d
 
 %\textbf{Contex}: 
 
-The Semantic Web (SW) is an extension of the WWW towards a Web of Data (WD), where data on the Web are published through W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } standards. The goal is to enable computers to do more automated tasks by developing systems that can support trusted interactions over the network. The Linked Data (LD) term points to a set of steps to distribute and connect structured data on the Web using SW standards. The LD principles\footnote{LD principles: https://www.w3.org/DesignIssues/LinkedData.html} provide a flexible publishing paradigm to integrate and interlink any kind of data from arbitrary datasets published by various data providers on the Web. Once LD is presented under an open license, it is called Linked Open Data (LOD). LD is empowered by the SW formats and technologies that enable it, such as RDF\footnote{Resource Description Framework: https://www.w3.org/RDF/} and SPARQL\footnote{Semantic Query Language: https://www.w3.org/TR/sparql11-overview/}, standardized approaches to create data stores and query them.
+The Semantic Web (SW) initiative aims to enable the automation of increasingly complex tasks using the Web through the provision of increasingly machine readable content on the Web~\cite{semwebsa}. The W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } has recommended a variety of SW standards towards this goal. The core SW standard is the Resource Description Framework (RDF)~\cite{rdfconcepts11}, which outlines a graph-based data model by which the content of the Web can be structured and interlinked. Another key standard is the SPARQL Protocol and RDF Query Language (SPARQL)~\cite{sparql11}, which can be used for expressing potentially complex queries over RDF. Other standards include RDF Schema (RDFS)~\cite{rdfschema11} and the Web Ontology Language (OWL)~\cite{owl2primer} for defining the semantics of terms used in the RDF graph, and the Shapes Constraint Language (SHACL)~\cite{shacl} for validating RDF graphs with respect to specified constraints.
 
-%\textbf{Link Data Growth:}
+The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralised manner~\cite{ldbook}. Linked Open Data (LOD) refers to the publication of data following LD principles on the Web under an open licence. Supporting these initiatives, the LD community has developed -- and continues to develop -- novel techniques and tools for generating~\cite{Bizer03,GentileZC15}, publishing~\cite{CorlosquetDCPD09,MaaliCP12}, interlinking~\cite{silk,NgomoA11}, querying~\cite{HartigBF09,VerborghSHHVMHC16} and otherwise consuming~\cite{TummarelloDO07,swsejws} LD. A growing number of publishers, in a variety of different domains~\cite{SchmachtenbergBP14}, have contributed to the LOD ecosystem over the years. In order to visualise this growing ecosystem, the LOD Cloud\footnote{\url{http://lod-cloud.net}; McCrae et al.} depicts a graph of Linked Open Datasets and their interconnections, where it describes 1,255 datasets as of May 2020; some of the largest of these datasets provide RDF descriptions of millions of resources~\cite{ErxlebenGKMV14,dbpedia}. Syntaxes for RDF have also become common for schema.org markup~\cite{schemaorg}, being used on millions of websites~\cite{MeuselPB14}.
+These developments have given rise to the first concrete instance of a so-called Web of Data (WoD)~\cite{wodbook}: a Web composed of structured, interlinked data.
+\medskip
 
-Every day more players participate in the ecosystem of linked data and the community around Linked Data continues to develop tools for data editors to share their data as Linked Data. The result of these efforts is several software libraries that convert information from arbitrary formats to RDF, for example: D2R Server3, XLWrap4, Any235, etc.
-In addition, more and more Web 2.0 portals expose their data as linked data, for example, the most used content management systems such as Drupal 7 and knowledge management systems such as SemWiki, or news portals such as the New York Times or the BBC, publish their articles following the principles of Linked Data. As a result, the resources are continuously created, moved and deleted, linked and unlinked.
+Rather than being static, the Web of Data is subject to continuous change within individual datasets, and subject to expansion in size, scope and diversity in terms of the datasets that constitute it. Data publishers may continuously improve their datasets by adding and updating data and relationships, or removing obsolete ones. Beyond each individual dataset, new datasets may come online, while others go offline. Research has shown that Linked Data resources are subject to frequent changes~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. 
 
-From the time that the LD principles have been created until now, Linked Data has grown significantly in the number of RDF datasets and the size of those datasets~\cite{SchmachtenbergBP14}. Additionally, a wide variety of applications use information sourced from the Web to offer services.
+This creates a challenge for the applications that both manage and consume this data: how to deal with dynamic Linked Data.
+Without adequate techniques to deal with the aforementioned changes in Linked Datasets, applications may succumb to a variety of undesirable outcomes: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. The decentralised nature of Linked Data can imply additional, non-trivial challenges for applications that aim to keep up-to-date with the current state of all potentially relevant sources over the Web. While a variety of techniques have been proposed over the past two decades for dealing with the dynamics of the traditional document-centric Web~\cite{GaddeCR01,RisvikM02}, the structure of Linked Data implies unique challenges (and opportunities) with respect to dynamics, calling for specialised techniques.
+\medskip
 
-%\textbf{Dynamic Challenges:}
 
-Web of Data continues to expand in size, scope and diversity, data editors continually try to improve the quality of their data by changing vocabularies, adding new information and relationships, or eliminating obsolete ones.
-
-Recent investigations~\cite{UmbrichHHPD10, DividinoSGG13, AuerDML12, SchmachtenbergBP14} have shown that the data published and interlinked on the Web is subject to frequent changes. The volume and velocity of changes constitute important challenges that applications must handle to keep results up-to-date.
-
-The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
+%The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
 
 %\textbf{Importance of Dataset Dynamics Knowledge:}
 
-A possible threat to the quality of the linked data is the lack of knowledge about the dynamics in the dependent remote datasets. Applications that consume linked data often need to know the changes in these data sets to update local data dependencies. To update your local data dependencies, applications that consume linked data need to know which unit of data has changed, as well as how and when it has changed.
+%A possible threat to the quality of the linked data is the lack of knowledge about the dynamics in the dependent remote datasets. Applications that consume linked data often need to know the changes in these data sets to update local data dependencies. To update your local data dependencies, applications that consume linked data need to know which unit of data has changed, as well as how and when it has changed.
 
-Being able to understand the nature of Linked Data dynamics and characterize change is of core importance to publishing, research and development. With regards to publishing, a better understanding of Linked Data dynamics would, for example, inform the design of tools for keeping published data consistent with changes in external data. With regards to research, more granular data on Linked Data dynamics would open up new paths for exploration,  e.g., understanding the rate of change of a data set can inform a decision about whether an application will cache its content locally or query it remotely on the fly. With regards development, for current systems, the results of such studies would inform crawling strategies, local index refresh rates and update strategies, cache invalidation techniques and tuning, and so forth.
+%Being able to understand the nature of Linked Data dynamics and characterize change is of core importance to publishing, research and development. With regards to publishing, a better understanding of Linked Data dynamics would, for example, inform the design of tools for keeping published data consistent with changes in external data. With regards to research, more granular data on Linked Data dynamics would open up new paths for exploration,  e.g., understanding the rate of change of a data set can inform a decision about whether an application will cache its content locally or query it remotely on the fly. With regards development, for current systems, the results of such studies would inform crawling strategies, local index refresh rates and update strategies, cache invalidation techniques and tuning, and so forth.
 
-Many works have tried to handle these challenges. On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
+In the past years, a number of works have proposed concepts and techniques to address the inherent challenges of handling dynamic Linked Data. On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
 
-Today, as people develop increasingly sophisticated applications that exploit the very nature of the linked data, the robustness of the support infrastructure becomes increasingly important. Dataset dynamics affect application performance.
+%Today, as people develop increasingly sophisticated applications that exploit the very nature of the linked data, the robustness of the support infrastructure becomes increasingly important. Dataset dynamics affect application performance.
 
 %\textbf{Dataset dynamics as research topic:}
 
