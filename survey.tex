@@ -73,8 +73,20 @@ These developments have given rise to the first concrete instance of a so-called
 Rather than being static, the Web of Data is subject to continuous change within individual datasets, and subject to expansion in size, scope and diversity in terms of the datasets that constitute it. Data publishers may continuously improve their datasets by adding and updating data and relationships, or removing obsolete ones. Beyond each individual dataset, new datasets may come online, while others go offline. Research has shown that Linked Data resources are subject to frequent changes~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. 
 
 This creates a challenge for the applications that both manage and consume this data: how to deal with dynamic Linked Data.
-Without adequate techniques to deal with the aforementioned changes in Linked Datasets, applications may succumb to a variety of undesirable outcomes: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. The decentralised nature of Linked Data can imply additional, non-trivial challenges for applications that aim to keep up-to-date with the current state of all potentially relevant sources over the Web. While a variety of techniques have been proposed over the past two decades for dealing with the dynamics of the traditional document-centric Web~\cite{GaddeCR01,RisvikM02}, the structure of Linked Data implies unique challenges (and opportunities) with respect to dynamics, calling for specialised techniques.
+Without adequate techniques to deal with the aforementioned changes in Linked Datasets, applications may succumb to a variety of undesirable outcomes~\cite{MeimarisPPGS14}: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. 
 \medskip
+
+% AH: cannot find the BancilhonDK92 reference. Is it relevant?
+
+The challenge of managing dynamic data in an effective manner is not unique to Linked Data. Various works have addressed related issues in the context of relational databases, in terms of database reorganisation~\cite{LernerH90}, schema versioning~\cite{Roddick95}, view maintenance~\cite{GuptaM95}, among other topics; however, such works address the problem of dynamics in a local setting, whereas the decentralised nature of Linked Data poses non-trivial challenges. Researchers have also investigated dynamics in the context of the traditional Web, proposing techniques relating to incremental crawling~\cite{ChoG00}, Web caching~\cite{GaddeCR01}, dynamic information retrieval~\cite{RisvikM02}, change frequency estimations~\cite{ChoG03}, user behaviour~\cite{AlmeidaMC07}, and more besides; however, these latter works focus on the dynamics of mostly unstructured content (text), whereas Linked Data is structured.
+
+While approaches for dealing with the dynamics of Linked Data can -- as we will see in this survey -- potentially borrow insights from the techniques and results developed in the context of relational databases~\cite{LernerH90,Roddick95,GuptaM95} and the Web~\cite{ChoG00,GaddeCR01,RisvikM02,ChoG03,AlmeidaMC07}, the combination of decentralisation and structured data inherent to Linked Data implies unique challenges (and opportunities) with respect to dynamics, which can benefit from bespoke techniques that go beyond a straightforward synthesis of the state-of-the-art from other related areas.
+\medskip
+
+In the past years, a number of works have proposed bespoke concepts and techniques to address the inherent challenges of handling dynamic Linked Data. 
+
+On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
+
 
 
 %The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
@@ -85,7 +97,7 @@ Without adequate techniques to deal with the aforementioned changes in Linked Da
 
 %Being able to understand the nature of Linked Data dynamics and characterize change is of core importance to publishing, research and development. With regards to publishing, a better understanding of Linked Data dynamics would, for example, inform the design of tools for keeping published data consistent with changes in external data. With regards to research, more granular data on Linked Data dynamics would open up new paths for exploration,  e.g., understanding the rate of change of a data set can inform a decision about whether an application will cache its content locally or query it remotely on the fly. With regards development, for current systems, the results of such studies would inform crawling strategies, local index refresh rates and update strategies, cache invalidation techniques and tuning, and so forth.
 
-In the past years, a number of works have proposed concepts and techniques to address the inherent challenges of handling dynamic Linked Data. On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
+
 
 %Today, as people develop increasingly sophisticated applications that exploit the very nature of the linked data, the robustness of the support infrastructure becomes increasingly important. Dataset dynamics affect application performance.
 
@@ -97,9 +109,9 @@ Dataset dynamics have emerged as an active research topic around 2010 through th
 
 The study of changes in documents and data sets is very relevant for a broad range of application domains. 
 
-Cho and Garcia-Molina et al.~\cite{ChoG03} provided a comprehensive study on the frequency of change of web documents. They previously worked on how to integrate knowledge about the evolution of the web for incremental crawlers~\cite{ChoG00}. Additional work improved estimators to avoid the effects of incomplete change history~\cite{NeumaierU16}. Other research has focused, for example, on investigating the dynamics of Wikipedia articles~\cite{AlmeidaMC07}.
 
-There are some efforts to solve this problem in databases, e.g.~\cite{LernerH90, BancilhonDK92, Roddick95}, among others, but they do not cover all the aspects of the Linked Data datasets.
+
+
 
 %\textbf{Dataset dynamics tasks:}
 
