@@ -33,8 +33,8 @@
 \begin{frontmatter}
 
 %\pretitle{}
-\title{Dynamic Linked Data: A Survey}
-\runningtitle{Dynamic Linked Data: A Survey}
+\title{Consuming Dynamic Linked Data Knowledge Graphs: A Survey}
+\runningtitle{Consuming Dynamic Linked Data Knowledge Graphs: A Survey}
 
 % Two or more authors:
 \author[A]{\inits{A.}\fnms{Alberto} \snm{Moya Loustaunau}\ead[label=e1]{amoya@dcc.uchile.cl}},
@@ -47,12 +47,12 @@ and
 Southampton, \cny{UK}\printead[presep={\\}]{e2}}
 
 \begin{abstract}
-Linked Open Datasets are often dynamic: the resources described by these datasets are continuously created, moved, modified, deleted, linked, and unlinked. Applications that leverage Linked Data must take these changes into account in order to deliver accurate services over up-to-date data. However, keeping track of such changes, particularly for remote datasets accessible over the Web, can be a costly process. This challenge has been acknowledged by a variety of researchers who have responded by suggesting techniques for dealing with dynamic Linked Data. However, the current understanding of dynamic Linked Data is still incomplete. Our contribution is a systematic literature review on dynamic Linked Data that provides an introduction and overview of the current approaches to describe, detect and propagate changes in Linked Data, as well as approaches proposed to consume dynamic Linked Data, identifying respective potentials and limits. \ah{Revise/extend later.}
+A number of prominent open knowledge graphs have been published as Linked Data. These knowledge graphs are dynamic: the resources described by these graphs are continuously created, moved, modified, deleted, linked, and unlinked. Applications that consume data from such knowledge graphs must take these changes into account in order to deliver accurate services over up-to-date data. However, keeping track of such changes can be a costly process, particularly for multiple remote knowledge graphs accessible over the Web. This challenge has been acknowledged by a variety of researchers who have responded by suggesting techniques for dealing with dynamic knowledge graphs, but the current understanding of this problem is still incomplete. Our contribution is a systematic literature review on techniques for consuming dynamic knowledge graphs in a Linked Data setting, identifying respective potentials and limits. \ah{Revise/extend later.}
 \end{abstract}
 
 \begin{keyword}
-\kwd{Data dynamics}
-\kwd{Synchronization}
+\kwd{Data Dynamics}
+\kwd{Knowledge Graphs}
 \kwd{Linked Data}
 \end{keyword}
 
@@ -66,28 +66,23 @@ Linked Open Datasets are often dynamic: the resources described by these dataset
 
 The Semantic Web (SW) initiative aims to enable the automation of increasingly complex tasks using the Web through the provision of increasingly machine readable content on the Web~\cite{semwebsa}. The W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } has recommended a variety of SW standards towards this goal. The core SW standard is the Resource Description Framework (RDF)~\cite{rdfconcepts11}, which outlines a graph-based data model by which the content of the Web can be structured and interlinked. Another key standard is the SPARQL Protocol and RDF Query Language (SPARQL)~\cite{sparql11}, which can be used for expressing potentially complex queries over RDF. Other standards include RDF Schema (RDFS)~\cite{rdfschema11} and the Web Ontology Language (OWL)~\cite{owl2primer} for defining the semantics of terms used in the RDF graph, and the Shapes Constraint Language (SHACL)~\cite{shacl} for validating RDF graphs with respect to specified constraints.
 
-The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralised manner~\cite{ldbook}. Linked Open Data (LOD) refers to the publication of data following LD principles on the Web under an open licence. Supporting these initiatives, the LD community has developed -- and continues to develop -- novel techniques and tools for generating~\cite{Bizer03,GentileZC15}, publishing~\cite{CorlosquetDCPD09,MaaliCP12}, interlinking~\cite{silk,NgomoA11}, querying~\cite{HartigBF09,VerborghSHHVMHC16} and otherwise consuming~\cite{TummarelloDO07,swsejws} LD. A growing number of publishers, in a variety of different domains~\cite{SchmachtenbergBP14}, have contributed to the LOD ecosystem over the years. In order to visualise this growing ecosystem, the LOD Cloud\footnote{\url{http://lod-cloud.net}; McCrae et al.} depicts a graph of Linked Open Datasets and their interconnections, where it describes 1,255 datasets as of May 2020; some of the largest of these datasets provide RDF descriptions of millions of resources~\cite{ErxlebenGKMV14,dbpedia}. Syntaxes for RDF have also become common for schema.org markup~\cite{schemaorg}, being used on millions of websites~\cite{MeuselPB14}.
+The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralized manner~\cite{ldbook}. Linked Open Data (LOD) refers to the publication of data following LD principles on the Web under an open license. Supporting these initiatives, the LD community has developed -- and continues to develop -- novel techniques and tools for generating~\cite{Bizer03,GentileZC15}, publishing~\cite{CorlosquetDCPD09,MaaliCP12}, interlinking~\cite{silk,NgomoA11}, querying~\cite{HartigBF09,VerborghSHHVMHC16} and otherwise consuming~\cite{TummarelloDO07,swsejws} LD. A growing number of publishers, in a variety of different domains~\cite{SchmachtenbergBP14}, have contributed to the LOD ecosystem over the years. In order to visualize this growing ecosystem, the LOD Cloud\footnote{\url{http://lod-cloud.net}; McCrae et al.} depicts a graph of Linked Open Datasets and their interconnections, where it describes 1,255 datasets as of May 2020; some of the largest of these datasets provide RDF descriptions of millions of resources~\cite{ErxlebenGKMV14,dbpedia}. Syntaxes for RDF have also become common for schema.org markup~\cite{schemaorg}, being used on millions of websites~\cite{MeuselPB14}.
 These developments have given rise to the first concrete instance of a so-called Web of Data (WoD)~\cite{wodbook}: a Web composed of structured, interlinked data.
+
+More recently, the concept of a ``knowledge graph'' has been gaining traction, in particular, after the announcement of the Google Knowledge Graph~\cite{GoogleKG}, followed by further announcements by companies such as eBay, Facebook IBM, Microsoft~\cite{NoyGJNPT19} and many more besides. While many so-called ``enterprise knowledge graphs'' are proprietary and thus internal to a particular organization~\cite{NoyGJNPT19}, other so-called ``open knowledge graphs'' are published on the Web under open licenses for the common good~\cite{FarberBMR18}. Prominent examples of open knowledge graphs include BabelNet~\cite{NavigliP12}, DBpedia~\cite{dbpedia}, OpenCyc~\cite{FarberBMR18}, Wikidata~\cite{VrandecicK14} and YAGO~\cite{HoffartSBW13}. Leveraging RDF as a standard graph-structured data model, most such open knowledge graphs are published using the Semantic Web standards and the Linked Data principles~\cite{FarberBMR18,MalyshevKGGB18}, thus forming an integral part of the Web of Data. The most prominent such knowledge graphs receive upwards of millions of queries per data over the Web~\cite{SaleemAHMN15,MalyshevKGGB18}.
 \medskip
 
-Rather than being static, the Web of Data is subject to continuous change within individual datasets, and subject to expansion in size, scope and diversity in terms of the datasets that constitute it. Data publishers may continuously improve their datasets by adding and updating data and relationships, or removing obsolete ones. Beyond each individual dataset, new datasets may come online, while others go offline. Research has shown that Linked Data resources are subject to frequent changes~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. 
-
-This creates a challenge for the applications that both manage and consume this data: how to deal with dynamic Linked Data.
-Without adequate techniques to deal with the aforementioned changes in Linked Datasets, applications may succumb to a variety of undesirable outcomes~\cite{MeimarisPPGS14}: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. 
+Rather than being static, open knowledge graphs are subject to continuous change, and the broader Web of Data is further subject to expansion in size, scope and diversity, with new datasets being added, and obsolete ones being removed~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. This creates a challenge for the applications that both manage and consume this data: how to deal with dynamic knowledge graphs on the Web? Without adequate techniques to deal with the aforementioned changes in open knowledge graphs, applications may succumb to a variety of undesirable outcomes~\cite{MeimarisPPGS14}: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. This survey focuses on the challenge of consuming dynamic knowledge graphs published as Linked Data.
 \medskip
 
 % AH: cannot find the BancilhonDK92 reference. Is it relevant?
 
-The challenge of managing dynamic data in an effective manner is not unique to Linked Data. Various works have addressed related issues in the context of relational databases, in terms of database reorganisation~\cite{LernerH90}, schema versioning~\cite{Roddick95}, view maintenance~\cite{GuptaM95}, among other topics; however, such works address the problem of dynamics in a local setting, whereas the decentralised nature of Linked Data poses non-trivial challenges. Researchers have also investigated dynamics in the context of the traditional Web, proposing techniques relating to incremental crawling~\cite{ChoG00}, Web caching~\cite{GaddeCR01}, dynamic information retrieval~\cite{RisvikM02}, change frequency estimations~\cite{ChoG03}, user behaviour~\cite{AlmeidaMC07}, and more besides; however, these latter works focus on the dynamics of mostly unstructured content (text), whereas Linked Data is structured.
+The challenge of managing dynamic data in an effective manner is not unique to this particular setting. Various works have addressed related issues in the context of relational databases, in terms of database reorganization~\cite{LernerH90}, schema versioning~\cite{Roddick95}, view maintenance~\cite{GuptaM95}, among other topics; however, such works address the problem of dynamics in a local setting, whereas the decentralized nature of Linked Data poses non-trivial challenges. Researchers have also investigated dynamics in the context of the traditional Web, proposing techniques relating to incremental crawling~\cite{ChoG00}, Web caching~\cite{GaddeCR01}, dynamic information retrieval~\cite{RisvikM02}, change frequency estimations~\cite{ChoG03}, user behavior~\cite{AlmeidaMC07}, and more besides; however, these latter works focus on the dynamics of mostly unstructured content (text), whereas Linked Data is structured.
 
-While approaches for dealing with the dynamics of Linked Data can -- as we will see in this survey -- potentially borrow insights from the techniques and results developed in the context of relational databases~\cite{LernerH90,Roddick95,GuptaM95} and the Web~\cite{ChoG00,GaddeCR01,RisvikM02,ChoG03,AlmeidaMC07}, the combination of decentralisation and structured data inherent to Linked Data implies unique challenges (and opportunities) with respect to dynamics, which can benefit from bespoke techniques that go beyond a straightforward synthesis of the state-of-the-art from other related areas.
+While approaches for dealing with the dynamics of Linked Data can -- as we will see in this survey -- potentially borrow insights from the techniques and results developed in the context of relational databases~\cite{LernerH90,Roddick95,GuptaM95} and the Web~\cite{ChoG00,GaddeCR01,RisvikM02,ChoG03,AlmeidaMC07}, the combination of decentralization and structured data inherent to Linked Data implies unique challenges (and opportunities) with respect to dynamics, which can benefit from bespoke techniques that go beyond a straightforward synthesis of the state-of-the-art from other related areas.
 \medskip
 
-In the past years, a number of works have proposed bespoke concepts and techniques to address the inherent challenges of handling dynamic Linked Data. 
-
-On the one hand, the evolution of LOD datasets has been studied to understand and identify patterns that allow estimating future changes. On the other hand, techniques have been developed that allow applications to locally store the relevant data and to estimate the appropriate time to update them.
-
-
+In the past years, a number of works have proposed bespoke concepts and techniques to address the inherent challenges of handling dynamic Linked Data. An important milestone was the initiation in 2010 of the W3C Dataset Dynamics Interest Group\footnote{https://www.w3.org/wiki/DatasetDynamics}: a community effort to study the dynamics of individual Linked Datasets and the broader Web of Data, motivated by the emergent challenges that were observed at that time. The community group at that time provided a brief survey of tools and techniques that could be brought to bear for taming dynamic Linked Data, including methods for link maintenance~\cite{PopitschH10,PopitschH11}, notification mechanisms~\cite{TrampFEA10}, subscription mechanisms~\cite{Fitzpatrick10,PassantM10}, change frequency~\cite{UmbrichHHPD10}, and more besides. A concise survey of these developments was provided by Umbrich et al.~\cite{UmbrichVH10} at that time. Since then a much broader range of works have emerged on the topic, investigating further aspects including archiving~\cite{UmbrichMP15}, caching mechanisms~\cite{MartinUA10,LampoVDR11,UmbrichKHP12,DehghanzadehPKUHD14,DividinoGS15,Kjernsmo15,ZhangSTQ15,NishiokaS17,dehghanzadeh2017}, change detection~\cite{ZeginisTC11,PapavasileiouFFKC13,DividinoKG14,PernelleSMT16}, change prediction~\cite{GonzalezH18,LoustaunauH19}, change verification~\cite{NishiokaS18}, continuous querying~\cite{DehghanzadehDGV15}, dynamic observatories~\cite{KaferUHP12}, synchronization~\cite{KnuthHS16,TummarelloMBE07}, versioning~\cite{GraubeHU14}, vocabularies~\cite{Berners04,Dady10} as well as more general works aiming to analyze, observe, model and understand dynamics in this setting~\cite{RulaPHSM12,DividinoSGG13,KaferAUOH13,DividinoGSG14,KaferWA17,NishiokaS15,NishiokaS16}.
 
 %The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
 
@@ -103,11 +98,11 @@ On the one hand, the evolution of LOD datasets has been studied to understand an
 
 %\textbf{Dataset dynamics as research topic:}
 
-Dataset dynamics have emerged as an active research topic around 2010 through the community\footnote{https://www.w3.org/wiki/DatasetDynamics} effort to study the dynamics of the dataset, a term that essentially refers to the content and interconnection of changes in the sources of linked data.  However, although the development of research and tools has not stopped, a reduction in community's activity has been observed.
+
 
 %\textbf{Dataset dynamics in databases and web:}
 
-The study of changes in documents and data sets is very relevant for a broad range of application domains. 
+%The study of changes in documents and data sets is very relevant for a broad range of application domains. 
 
 
 
@@ -115,64 +110,77 @@ The study of changes in documents and data sets is very relevant for a broad ran
 
 %\textbf{Dataset dynamics tasks:}
 
-Considering the above, Meimaris et al.~\cite{MeimarisPPGS14} classified the benefits of evolution management into two categories. The first one is concerned with \textit{quality control and maintenance}. For instance, mishaps such as stale cache or broken links create inconsistencies and failures that are hardly feasible to overcome with no knowledge concerning the resources affected. The second one is concerned with \textit{data exploitation}, as the evolution of data itself can provide valuable insights and shed light on the dynamics of the data. In this sense, proper management of dataset dynamics in evolving could benefit intensive tasks like browser or query engines.
+%Considering the above, Meimaris et al.~\cite{MeimarisPPGS14} classified the benefits of evolution management into two categories. The first one is concerned with \textit{quality control and maintenance}. For instance, mishaps such as stale cache or broken links create inconsistencies and failures that are hardly feasible to overcome with no knowledge concerning the resources affected. The second one is concerned with \textit{data exploitation}, as the evolution of data itself can provide valuable insights and shed light on the dynamics of the data. In this sense, proper management of dataset dynamics in evolving could benefit intensive tasks like browser or query engines.
 
 %\textbf{Paper Why:}
 
-Despite its importance, the current understanding of the dynamics of change for the data network is not enough. The dynamics of change of the entire linked data ecosystem is not yet well understood, apart from its rapid growth, illustrated by the frequently presented linked data cloud diagrams. However, there is work in this area both at the level of research and infrastructure.
+In summary, the past decade has seen the emergence of a wide range of techniques for understanding and managing the dynamics of both individual knowledge graphs, as well as multiple knowledge graphs accessible as Linked Data. Hence, taking into consideration the increased attention on knowledge graphs, we see a need for a systematic survey that draws together and describes these techniques,shows how they may interconnect and complement each other, as well as distilling the key research questions that remain open in the area, providing a framework in order to appropriately position future research activities.
 
-Umbrich et al.~\cite{UmbrichVH10} surveyed an overview of existing dynamic datasets solutions. They provided a description of the aspects of the discovery, the level of granularity and the description of the changes, as well as detection algorithms and notification mechanisms. However, ten years have passed and since then various technical solutions have been presented to address the changes in datasets of the Web of Data. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to provide a framework/background in order to appropriately position new research activities.
+%Umbrich et al.~\cite{UmbrichVH10} surveyed an overview of existing dynamic datasets solutions. They provided a description of the aspects of the discovery, the level of granularity and the description of the changes, as well as detection algorithms and notification mechanisms. However, ten years have passed and since then various technical solutions have been presented to address the changes in datasets of the Web of Data. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to 
 
 \subsection{Survey Scopes}\label{Scopes}
 
 %\textbf{summay of the content taxonomy:}
 
-This survey provides an overview of the published works related to data dynamics on the Linked Open Data and the challenges that this represents for the applications that consume them (see Figure~\ref{fig:pic}). Applications that use dynamic data, in different measures, frequencies and importance have had to develop methods to synchronize their results taking into account the changing nature of the origins. We have organized this survey taking into account the general scheme of applications that consume data from the decentralized web. In Section~\ref{Data}, we propose a general description of the works that have studied large datasets to perform qualitative and quantitative analyzes, looking for patterns and semantic dependencies in the data, as well as, proposals of methods to detect the changes between different datasets versions. These changesets  detected by data sources or applications have to been represented in different ways taking into account space, time and usability requirements. In section~\ref{Archiving}, we propose a deep look at the works related to the data dynamics representations. These changes, independently if they were physically represented, must take into account by the applications, for which multiple techniques, protocols and applications have been developed to changes propagations from the data sources to the applications. In Section~\ref{Index}, we analyze the available synchronization tools, as well as, their scope and limits. Finally, in section~\ref{Query}, we show the solutions adopted by the applications to deliver accurate responses and at the same time respond to the dynamics of the data. This survey relates the developed works associated with the evolution of datasets at the data level. However, there is a lot of work on detection, representation, and management of changes at the ontological level~\cite{ZablithAdFKMPS15}.
+\ah{Aquí va mi propuesta para esta parte. He quitado la arquitectura de la aplicación y he intentado generalizar un poco la descripción del alcance. Quizás haya que ajustar las cosas un poco para que quepan mejor con el trabajo ya hecho.}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.9\linewidth]{img/pic}
-	\caption{Typical workflow diagram of a LOD application handling dynamic data.}
-	\label{fig:pic}
-\end{figure}
+This survey focuses on the challenging of \textit{consuming dynamic knowledge graphs in a Linked Data setting}. We identify the following four sub-topics relating to examples of key questions that a consumer wishes to be able to answer in such settings:
 
-The survey addresses several \textit{use cases} that could benefit from an understanding of the dynamics of the data and that have been unveiled by several authors. Now we give an introductory summary of the main use cases found in literature~\cite{UmbrichVH10, PopitschH11, KaferUHP12, KaferAUOH13, MeimarisPPGS14}, as well as, the tasks involved in them (although we note that the survey will deepen each task in more depth later):
+\begin{description}
+\item[\textsc{Change}:] What can change in a knowledge graph? What can change across multiple knowledge graphs? How can these changes be extracted? 
+\item[\textsc{Dynamics}:] Has something changed recently? How often has it changed in the past? Can we predict when something will change again?
+\item[\textsc{Synchronization}:] How can I retrieve data about what changed? How can I do so efficiently? How can I prioritize the changes to retrieve?
+\item[\textsc{Maintenance}:] What action do I need to take to reflect changes? How do I efficiently execute these actions? How do I prioritize these actions?
+\end{description}
 
-\textbf{Synchronization:} 
-A application wants to mirror (or copy) the (part of) linked dataset following the ``warehouse'' approaches and must synchronize with the original data source.
-The most common case is to maintain a locally cached LOD index. LinkedData's various centralized search and query methods all rely on local copies of RDF copies collected from the web. If the original data source changes, the replicated index is obsolete and affects the freshness of the results. With a more detailed knowledge of the dynamics of linked data, a centralized engine can, for example, focus on areas that catch up with rapidly changing contributions.
+By \textsc{Change} we refer to instantaneous and observable updates to a knowledge graph, which may be understood at various levels: at the level of an entity, a graph, a schema, a source, etc. \textsc{Dynamics} then refers to change over time, including changes in the past, present, and/or future. \textsc{Synchronization} refers to a consumer learning about the changes that have happened (recently), which again involve different levels of change. Finally,  \textsc{Maintenance} refers to the actions that a consumer should take once they learn of the nature of the changes, which may include updating links, invalidating query caches, etc.
 
-\textbf{Smart Caching:}
-Instead, the ``live querying'' approaches for Linked Data dereference and discover sources on the fly using one or more datasets.However, remote lookups are expensive to execute, thus, it uses a cache that stores local copies of remote data. which must be invalidated when the remote data change. Linking data dynamic knowledge can help to determine the sources that can be cached to save time and resources and the life time of the cached data. An useful example of application can be the smart cache integration of live querying or real-time browsing through Linked Data.
-
-\textbf{Link Maintenance:}
-In LD, publishers embed statements that link local to external resources to use remote data in the local application context. An important point for applications that rely on these links is that links can change, resources can be lost or moved, and new resources can be useful link targets. If the representation of these remote resources changes or becomes unavailable at a particular URI, the application must be notified to keep these links valid. Knowledge of dynamics can help publishers determine how often a linkset needs to be updated based on the target domain or link type.
-
-\textbf{Vocabulary Evolution and Versioning:}
-A specific LOD dataset contains a set of resources, such as clases and properties, that belongs for a particular vocabulary. The definition and structure of the ontologies and vocabularies may change.  changes related with vocabulary terms can affect the interpretation of the remote datasets. So, as vocabulary changes (evolves), there should be some support for spreading vocabulary/ontology changes to the dataset. You must update the dataset to accommodate with new version the vocabulary.
-Learning and understanding the dynamics of vocabularies may inspire and suggest better methodologies for versioning.
-
-\textbf{Hybrid architectures: }
-An important choice for systems that process large amounts of data is to decide between the pre-processing overhead vs the runtime-processing overhead. An application could obtain more benefits in pre-processing (for example, caching, local indexing, reasoning materialization, etc.) of the more static data and leaving the runtime-processing for more dynamic data. In a hybrid architecture, data dynamics information can help decide the most appropriate methods for the data considering that a complex query could contain both. For example, you could decompose a query and answer the static part using the cache and invoke live querying only for the most dynamic part.
-
-\textbf{Change Verification:}
-Many datasets evolve collaboratively in order to keep the information contained as current as possible. While most of the changes that occur in a dataset are correct, erroneous changes also occur due to vandalism or carelessness. Therefore, change verification is required to ensure the quality of the information stored. But manual changes verification is an intensive task. The knowledge of certain evolutionary patterns within the data could help to automatically determine whether the incoming changes are correct or not.
-
-The previous use cases require a technical infrastructure composed mainly of the following components~\cite{UmbrichVH10, PopitschH11}:
-
-\begin{itemize}
-
-\item A \textbf{Change Detection Methods} is an algorithm that is able to extract the differences between different versions of a linked dataset. These algorithms detect the changes taking into account a granularity level (e.g. RDF statements, RDF resources, etc.), a complexity level ( e.g. simples changes or compound changes), and also try to discover these changes in an unambiguous and deterministic way.
-
-\item A \textbf{Change Description Vocabulary} allows you to represent change information readable and understandable by a machine about what and how a certain resource has changed in a dataset.
-
-\item A \textbf{Dynamic Description Vocabulary} can express meta-information about the dynamics of the dataset at different granularity level (e.g. change frequency, change dimension, last update, etc.)
-
-\item A \textbf{Communication Mechanism} also known as notification protocols include the channels to propagate detected changes to consumer based on different initialization policies (e.g. push-based and pull-based)
-
-\item In the absence of mechanisms to propagate changes, the \textbf{Discovery Mechanism} allows applications to discover when changes occur.
-
-\end{itemize}
+%This survey provides an overview of the published works related to data dynamics on the Linked Open Data and the challenges that this represents for the applications that consume them (see Figure~\ref{fig:pic}). Applications that use dynamic data, in different measures, frequencies and importance have had to develop methods to synchronize their results taking into account the changing nature of the origins. We have organized this survey taking into account the general scheme of applications that consume data from the decentralized web. In Section~\ref{Data}, we propose a general description of the works that have studied large datasets to perform qualitative and quantitative analyzes, looking for patterns and semantic dependencies in the data, as well as, proposals of methods to detect the changes between different datasets versions. These changesets  detected by data sources or applications have to been represented in different ways taking into account space, time and usability requirements. In section~\ref{Archiving}, we propose a deep look at the works related to the data dynamics representations. These changes, independently if they were physically represented, must take into account by the applications, for which multiple techniques, protocols and applications have been developed to changes propagations from the data sources to the applications. In Section~\ref{Index}, we analyze the available synchronization tools, as well as, their scope and limits. Finally, in section~\ref{Query}, we show the solutions adopted by the applications to deliver accurate responses and at the same time respond to the dynamics of the data. This survey relates the developed works associated with the evolution of datasets at the data level. However, there is a lot of work on detection, representation, and management of changes at the ontological level~\cite{ZablithAdFKMPS15}.
+%
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[width=0.9\linewidth]{img/pic}
+%	\caption{Typical workflow diagram of a LOD application handling dynamic data.}
+%	\label{fig:pic}
+%\end{figure}
+%
+%The survey addresses several \textit{use cases} that could benefit from an understanding of the dynamics of the data and that have been unveiled by several authors. Now we give an introductory summary of the main use cases found in literature~\cite{UmbrichVH10, PopitschH11, KaferUHP12, KaferAUOH13, MeimarisPPGS14}, as well as, the tasks involved in them (although we note that the survey will deepen each task in more depth later):
+%
+%\textbf{Synchronization:} 
+%A application wants to mirror (or copy) the (part of) linked dataset following the ``warehouse'' approaches and must synchronize with the original data source.
+%The most common case is to maintain a locally cached LOD index. LinkedData's various centralized search and query methods all rely on local copies of RDF copies collected from the web. If the original data source changes, the replicated index is obsolete and affects the freshness of the results. With a more detailed knowledge of the dynamics of linked data, a centralized engine can, for example, focus on areas that catch up with rapidly changing contributions.
+%
+%\textbf{Smart Caching:}
+%Instead, the ``live querying'' approaches for Linked Data dereference and discover sources on the fly using one or more datasets.However, remote lookups are expensive to execute, thus, it uses a cache that stores local copies of remote data. which must be invalidated when the remote data change. Linking data dynamic knowledge can help to determine the sources that can be cached to save time and resources and the life time of the cached data. An useful example of application can be the smart cache integration of live querying or real-time browsing through Linked Data.
+%
+%\textbf{Link Maintenance:}
+%In LD, publishers embed statements that link local to external resources to use remote data in the local application context. An important point for applications that rely on these links is that links can change, resources can be lost or moved, and new resources can be useful link targets. If the representation of these remote resources changes or becomes unavailable at a particular URI, the application must be notified to keep these links valid. Knowledge of dynamics can help publishers determine how often a linkset needs to be updated based on the target domain or link type.
+%
+%\textbf{Vocabulary Evolution and Versioning:}
+%A specific LOD dataset contains a set of resources, such as clases and properties, that belongs for a particular vocabulary. The definition and structure of the ontologies and vocabularies may change.  changes related with vocabulary terms can affect the interpretation of the remote datasets. So, as vocabulary changes (evolves), there should be some support for spreading vocabulary/ontology changes to the dataset. You must update the dataset to accommodate with new version the vocabulary.
+%Learning and understanding the dynamics of vocabularies may inspire and suggest better methodologies for versioning.
+%
+%\textbf{Hybrid architectures: }
+%An important choice for systems that process large amounts of data is to decide between the pre-processing overhead vs the runtime-processing overhead. An application could obtain more benefits in pre-processing (for example, caching, local indexing, reasoning materialization, etc.) of the more static data and leaving the runtime-processing for more dynamic data. In a hybrid architecture, data dynamics information can help decide the most appropriate methods for the data considering that a complex query could contain both. For example, you could decompose a query and answer the static part using the cache and invoke live querying only for the most dynamic part.
+%
+%\textbf{Change Verification:}
+%Many datasets evolve collaboratively in order to keep the information contained as current as possible. While most of the changes that occur in a dataset are correct, erroneous changes also occur due to vandalism or carelessness. Therefore, change verification is required to ensure the quality of the information stored. But manual changes verification is an intensive task. The knowledge of certain evolutionary patterns within the data could help to automatically determine whether the incoming changes are correct or not.
+%
+%The previous use cases require a technical infrastructure composed mainly of the following components~\cite{UmbrichVH10, PopitschH11}:
+%
+%\begin{itemize}
+%
+%\item A \textbf{Change Detection Methods} is an algorithm that is able to extract the differences between different versions of a linked dataset. These algorithms detect the changes taking into account a granularity level (e.g. RDF statements, RDF resources, etc.), a complexity level ( e.g. simples changes or compound changes), and also try to discover these changes in an unambiguous and deterministic way.
+%
+%\item A \textbf{Change Description Vocabulary} allows you to represent change information readable and understandable by a machine about what and how a certain resource has changed in a dataset.
+%
+%\item A \textbf{Dynamic Description Vocabulary} can express meta-information about the dynamics of the dataset at different granularity level (e.g. change frequency, change dimension, last update, etc.)
+%
+%\item A \textbf{Communication Mechanism} also known as notification protocols include the channels to propagate detected changes to consumer based on different initialization policies (e.g. push-based and pull-based)
+%
+%\item In the absence of mechanisms to propagate changes, the \textbf{Discovery Mechanism} allows applications to discover when changes occur.
+%
+%\end{itemize}
 
 \subsection{Survey Methodology}\label{Methodology}
 
