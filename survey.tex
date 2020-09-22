@@ -52,8 +52,8 @@ A number of prominent open knowledge graphs have been published as Linked Data. 
 
 \begin{keyword}
 \kwd{Data Dynamics}
-\kwd{Knowledge Graphs}
 \kwd{Linked Data}
+\kwd{Knowledge Graphs}
 \end{keyword}
 
 \end{frontmatter}
@@ -114,7 +114,7 @@ In the past years, a number of works have proposed bespoke concepts and techniqu
 
 %\textbf{Paper Why:}
 
-In summary, the past decade has seen the emergence of a wide range of techniques for understanding and managing the dynamics of both individual knowledge graphs, as well as multiple knowledge graphs accessible as Linked Data. Hence, taking into consideration the increased attention on knowledge graphs, we see a need for a systematic survey that draws together and describes these techniques,shows how they may interconnect and complement each other, as well as distilling the key research questions that remain open in the area, providing a framework in order to appropriately position future research activities.
+In summary, the past decade has seen the emergence of a wide range of techniques for understanding and managing the dynamics of both individual knowledge graphs, as well as multiple knowledge graphs accessible as Linked Data. Hence, taking into consideration the increased attention on knowledge graphs, we see a need for a systematic survey that draws together and describes these techniques, showing how they may interconnect and complement each other, as well as distilling the key research questions that remain open in the area, providing a framework in order to appropriately position future research activities.
 
 %Umbrich et al.~\cite{UmbrichVH10} surveyed an overview of existing dynamic datasets solutions. They provided a description of the aspects of the discovery, the level of granularity and the description of the changes, as well as detection algorithms and notification mechanisms. However, ten years have passed and since then various technical solutions have been presented to address the changes in datasets of the Web of Data. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to 
 
@@ -184,9 +184,9 @@ By \textsc{Change} we refer to instantaneous and observable updates to a knowled
 
 \subsection{Survey Methodology}\label{Methodology}
 
-This systematic review was carried out following a fusion of the methodologies proposed in ~\cite{keele07, snyder19}. Next, we will present the main methodological decisions included in the review protocol, such as: the research questions we intended to answer, the selection criteria used to determine which studies are included or excluded from a the review, strategy that used to look for primary studies, including search terms and resources to be searched. To reduce the possibilities of reviewer bias, the study was conducted by 3 reviewers from 2 different institutions and we applied some polities for enrich the primary studies based on references to ensure the completeness~\cite{Wohlin14}. 
+This systematic review was carried out following a fusion of the methodologies proposed by Kitchenham and Charters~\cite{keele07} and by Synder~\cite{snyder19}. An overview of our search methodology including the number of retrieved articles at each step is shown in Figure~\ref{fig:methodology}. We now present the main methodological decisions included in the review protocol, such as: the target research questions, the selection criteria used to determine which studies are included or excluded from the review, as well as the strategy used to find primary studies including search terms and systems used. %To reduce the possibilities of reviewer bias, the study was conducted by 3 reviewers from 2 different institutions and we applied some polities for enrich the primary studies based on references to ensure the completeness~\cite{Wohlin14}. 
 
-An overview of our search methodology including the number of retrieved articles at each step is shown in Figure~\ref{fig:methodology} and described in detail below.
+
 
 
 \begin{figure*}[h]
@@ -198,35 +198,34 @@ An overview of our search methodology including the number of retrieved articles
 
 \subsubsection{Research Question}\label{Question}
 
-The goal of this review is to analyze existing methodologies to consume of Dynamic Linked Open Data. To reach this purpose, we attempt to answers the following research questions: 
+We identify the following high-level research questions based on the survey scope: 
 
 \begin{itemize}
-
-\item What methods or models exist to allow applications to consume dynamic linked data? 
-
-\item How data dynamics impact on linked open data consumption models?
-
+\item How can changes within knowledge graphs be characterized, formalized and described?
+\item How can the dynamics of knowledge graphs be characterized, formalized and described, and how can future changes be predicted?
+\item How can consumers be informed of changes in a timely fashion?
+\item 
 \end{itemize}
 
 %\textbf{Complementary Research Questions}
 
-However, apart from these questions related to the technological stack of the consumption of dynamic linked data and more towards a point of view of web science, we are interested in those works that study the intrinsic dynamics of the data web answering some empirical questions related with the change degree and frequency, such as the following:
-
-\begin{itemize}
-
-\item \textbf{Change frequency:} Can we model change frequency of resources and thus predict future changes?
-
-\item \textbf{Change patterns:} Can we mine patterns that help to group by change behavior?
-
-\item \textbf{Degree of change:} How can we quantify how much a resource change?
-
-\item \textbf{Lifespan:} How can we estimate the time-to-live of Linked Data resources?
-
-\item \textbf{Schema evolution:} How dynamics are the schema used in Linked Datasets?
-
-\item \textbf{Structural changes:} Do we observe any changes in the structure of the network formed by links?
-
-\end{itemize}
+%However, apart from these questions related to the technological stack of the consumption of dynamic linked data and more towards a point of view of web science, we are interested in those works that study the intrinsic dynamics of the data web answering some empirical questions related with the change degree and frequency, such as the following:
+%
+%\begin{itemize}
+%
+%\item \textbf{Change frequency:} Can we model change frequency of resources and thus predict future changes?
+%
+%\item \textbf{Change patterns:} Can we mine patterns that help to group by change behavior?
+%
+%\item \textbf{Degree of change:} How can we quantify how much a resource change?
+%
+%\item \textbf{Lifespan:} How can we estimate the time-to-live of Linked Data resources?
+%
+%\item \textbf{Schema evolution:} How dynamics are the schema used in Linked Datasets?
+%
+%\item \textbf{Structural changes:} Do we observe any changes in the structure of the network formed by links?
+%
+%\end{itemize}
 
 \subsubsection{Inclusion and Exclusion Criteria}\label{Criteria}
 
