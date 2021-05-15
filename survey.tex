@@ -33,8 +33,8 @@
 \begin{frontmatter}
 
 %\pretitle{}
-\title{Consuming Dynamic Linked Data Knowledge Graphs: A Survey}
-\runningtitle{Consuming Dynamic Linked Data Knowledge Graphs: A Survey}
+\title{Querying Dynamic Linked Data Knowledge Graphs: A Survey}
+\runningtitle{Querying Dynamic Linked Data Knowledge Graphs: A Survey}
 
 % Two or more authors:
 \author[A]{\inits{A.}\fnms{Alberto} \snm{Moya Loustaunau}\ead[label=e1]{amoya@dcc.uchile.cl}},
@@ -47,7 +47,7 @@ and
 Southampton, \cny{UK}\printead[presep={\\}]{e2}}
 
 \begin{abstract}
-A number of prominent open knowledge graphs have been published as Linked Data. These knowledge graphs are dynamic: the resources described by these graphs are continuously created, moved, modified, deleted, linked, and unlinked. Applications that consume data from such knowledge graphs must take these changes into account in order to deliver accurate services over up-to-date data. However, keeping track of such changes can be a costly process, particularly for multiple remote knowledge graphs accessible over the Web. This challenge has been acknowledged by a variety of researchers who have responded by suggesting techniques for dealing with dynamic knowledge graphs, but the current understanding of this problem is still incomplete. Our contribution is a systematic literature review on techniques for consuming dynamic knowledge graphs in a Linked Data setting, identifying respective potentials and limits. \ah{Revise/extend later.}
+A number of prominent open knowledge graphs have been published as Linked Data. These knowledge graphs are dynamic: the resources they describe are continuously created, moved, modified, deleted, linked, and unlinked. Applications that query and consume data from such knowledge graphs must take such changes into account in order to deliver accurate services over up-to-date data. However, keeping track of changes can be a costly process, particularly when considering multiple remote knowledge graphs accessible over the Web. A number of techniques have been proposed in the literature to address challenges relating to dynamic knowledge graphs, but the current understanding of these challenges is still incomplete. Our contribution is a systematic literature review on techniques for consuming and querying dynamic knowledge graphs in a Linked Data setting. This review centers on four key concepts: \textit{change}, which characterizes instantaneous updates; \textit{dynamics}, which deals with change over time; \textit{synchronization}, which refers to detecting changes and retrieving the content that changes; and \textit{maintenance}, which covers the actions that are taken to reflect change. We survey works relating to these four concepts in the context of Linked Data knowledge graphs, and conclude with discussion of open challenges.
 \end{abstract}
 
 \begin{keyword}
@@ -62,27 +62,31 @@ A number of prominent open knowledge graphs have been published as Linked Data. 
 
 \section{Introduction}\label{Introduction}
 
-%\textbf{Contex}: 
+%\textbf{Context}: 
 
-The Semantic Web (SW) initiative aims to enable the automation of increasingly complex tasks using the Web through the provision of increasingly machine readable content on the Web~\cite{semwebsa}. The W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } has recommended a variety of SW standards towards this goal. The core SW standard is the Resource Description Framework (RDF)~\cite{rdfconcepts11}, which outlines a graph-based data model by which the content of the Web can be structured and interlinked. Another key standard is the SPARQL Protocol and RDF Query Language (SPARQL)~\cite{sparql11}, which can be used for expressing potentially complex queries over RDF. Other standards include RDF Schema (RDFS)~\cite{rdfschema11} and the Web Ontology Language (OWL)~\cite{owl2primer} for defining the semantics of terms used in the RDF graph, and the Shapes Constraint Language (SHACL)~\cite{shacl} for validating RDF graphs with respect to specified constraints.
+Knowledge graphs have recently been gaining considerable traction in both academic and industry~\cite{NoyGJNPT19}. While many ``enterprise knowledge graphs'' are proprietary and thus internal to a particular organization~\cite{NoyGJNPT19}, other ``open knowledge graphs'' are published on the Web under open licenses for the common good~\cite{FarberBMR18}. Prominent examples of open knowledge graphs include BabelNet~\cite{NavigliP12}, DBpedia~\cite{dbpedia}, OpenCyc~\cite{FarberBMR18}, Wikidata~\cite{VrandecicK14} and YAGO~\cite{HoffartSBW13}. 
 
-The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralized manner~\cite{ldbook}. Linked Open Data (LOD) refers to the publication of data following LD principles on the Web under an open license. Supporting these initiatives, the LD community has developed -- and continues to develop -- novel techniques and tools for generating~\cite{Bizer03,GentileZC15}, publishing~\cite{CorlosquetDCPD09,MaaliCP12}, interlinking~\cite{silk,NgomoA11}, querying~\cite{HartigBF09,VerborghSHHVMHC16} and otherwise consuming~\cite{TummarelloDO07,swsejws} LD. A growing number of publishers, in a variety of different domains~\cite{SchmachtenbergBP14}, have contributed to the LOD ecosystem over the years. In order to visualize this growing ecosystem, the LOD Cloud\footnote{\url{http://lod-cloud.net}; McCrae et al.} depicts a graph of Linked Open Datasets and their interconnections, where it describes 1,255 datasets as of May 2020; some of the largest of these datasets provide RDF descriptions of millions of resources~\cite{ErxlebenGKMV14,dbpedia}. Syntaxes for RDF have also become common for schema.org markup~\cite{schemaorg}, being used on millions of websites~\cite{MeuselPB14}.
-These developments have given rise to the first concrete instance of a so-called Web of Data (WoD)~\cite{wodbook}: a Web composed of structured, interlinked data.
+Many open knowledge graphs are published using the Semantic Web standards following Linked Data principles~\cite{FarberBMR18,MalyshevKGGB18}. The Resource Description Framework (RDF)~\cite{rdfconcepts11} is used to model data as a graph; the SPARQL Protocol and RDF Query Language (SPARQL)~\cite{sparql11} is used to query such graphs; while standards such as RDF Schema (RDFS)~\cite{rdfschema11}, the Web Ontology Language (OWL)~\cite{owl2primer}, and the Shapes Constraint Language (SHACL)~\cite{shacl}, enable reasoning and validation over such knowledge graphs. The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralized manner~\cite{ldbook}, forming a Web of Data~\cite{wodbook}. The most prominent open knowledge graphs now receive upwards of millions of queries per data over the Web~\cite{SaleemAHMN15,MalyshevKGGB18}.
 
-More recently, the concept of a ``knowledge graph'' has been gaining traction, in particular, after the announcement of the Google Knowledge Graph~\cite{GoogleKG}, followed by further announcements by companies such as eBay, Facebook IBM, Microsoft~\cite{NoyGJNPT19} and many more besides. While many so-called ``enterprise knowledge graphs'' are proprietary and thus internal to a particular organization~\cite{NoyGJNPT19}, other so-called ``open knowledge graphs'' are published on the Web under open licenses for the common good~\cite{FarberBMR18}. Prominent examples of open knowledge graphs include BabelNet~\cite{NavigliP12}, DBpedia~\cite{dbpedia}, OpenCyc~\cite{FarberBMR18}, Wikidata~\cite{VrandecicK14} and YAGO~\cite{HoffartSBW13}. Leveraging RDF as a standard graph-structured data model, most such open knowledge graphs are published using the Semantic Web standards and the Linked Data principles~\cite{FarberBMR18,MalyshevKGGB18}, thus forming an integral part of the Web of Data. The most prominent such knowledge graphs receive upwards of millions of queries per data over the Web~\cite{SaleemAHMN15,MalyshevKGGB18}.
+%The Semantic Web (SW) initiative aims to enable the automation of increasingly complex tasks using the Web through the provision of increasingly machine readable content on the Web~\cite{semwebsa}. The W3C\footnote{World Wide Web Consortium: https://www.w3.org/ } has recommended a variety of SW standards towards this goal. The core SW standard is the Resource Description Framework (RDF)~\cite{rdfconcepts11}, which outlines a graph-based data model by which the content of the Web can be structured and interlinked. Another key standard is the SPARQL Protocol and RDF Query Language (SPARQL)~\cite{sparql11}, which can be used for expressing potentially complex queries over RDF. Other standards include RDF Schema (RDFS)~\cite{rdfschema11} and the Web Ontology Language (OWL)~\cite{owl2primer} for defining the semantics of terms used in the RDF graph, and the Shapes Constraint Language (SHACL)~\cite{shacl} for validating RDF graphs with respect to specified constraints.
+
+%The Linked Data (LD) principles and best practices then outline a set of guidelines for publishing and interlinking RDF content on the Web in a decentralized manner~\cite{ldbook}. Linked Open Data (LOD) refers to the publication of data following LD principles on the Web under an open license. Supporting these initiatives, the LD community has developed -- and continues to develop -- novel techniques and tools for generating~\cite{Bizer03,GentileZC15}, publishing~\cite{CorlosquetDCPD09,MaaliCP12}, interlinking~\cite{silk,NgomoA11}, querying~\cite{HartigBF09,VerborghSHHVMHC16} and otherwise consuming~\cite{TummarelloDO07,swsejws} LD. A growing number of publishers, in a variety of different domains~\cite{SchmachtenbergBP14}, have contributed to the LOD ecosystem over the years. In order to visualize this growing ecosystem, the LOD Cloud\footnote{\url{http://lod-cloud.net}; McCrae et al.} depicts a graph of Linked Open Datasets and their interconnections, where it describes 1,255 datasets as of May 2020; some of the largest of these datasets provide RDF descriptions of millions of resources~\cite{ErxlebenGKMV14,dbpedia}. Syntaxes for RDF have also become common for schema.org markup~\cite{schemaorg}, being used on millions of websites~\cite{MeuselPB14}.
+%These developments have given rise to the first concrete instance of a so-called Web of Data (WoD)~\cite{wodbook}: a Web composed of structured, interlinked data.
+
+
 \medskip
 
-Rather than being static, open knowledge graphs are subject to continuous change, and the broader Web of Data is further subject to expansion in size, scope and diversity, with new datasets being added, and obsolete ones being removed~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. This creates a challenge for the applications that both manage and consume this data: how to deal with dynamic knowledge graphs on the Web? Without adequate techniques to deal with the aforementioned changes in open knowledge graphs, applications may succumb to a variety of undesirable outcomes~\cite{MeimarisPPGS14}: they may return results that are no longer valid, they may omit new information, they may miss relevant sources of data that have recently been added, they may link to sources of data that are no longer available, and so forth. This survey focuses on the challenge of consuming dynamic knowledge graphs published as Linked Data.
+Rather than being static, open knowledge graphs are subject to continuous change, and the broader Web of Data is further subject to expansion in size, scope and diversity, with new datasets being added, and obsolete ones being removed~\cite{UmbrichHHPD10, AuerDML12, KaferAUOH13, DividinoSGG13, SchmachtenbergBP14}. This creates a challenge for the applications that both manage and consume dynamic knowledge graphs on the Web. Without adequate techniques to deal with the aforementioned changes in open knowledge graphs, applications may succumb to a variety of undesirable outcomes~\cite{MeimarisPPGS14}: they may return results that are no longer valid, omit new information, miss relevant sources of data that have recently been added, link to sources of data that are no longer available, and so forth. This survey focuses on the challenges of managing and consuming dynamic knowledge graphs published as Linked Data.
 \medskip
 
 % AH: cannot find the BancilhonDK92 reference. Is it relevant?
 
-The challenge of managing dynamic data in an effective manner is not unique to this particular setting. Various works have addressed related issues in the context of relational databases, in terms of database reorganization~\cite{LernerH90}, schema versioning~\cite{Roddick95}, view maintenance~\cite{GuptaM95}, among other topics; however, such works address the problem of dynamics in a local setting, whereas the decentralized nature of Linked Data poses non-trivial challenges. Researchers have also investigated dynamics in the context of the traditional Web, proposing techniques relating to incremental crawling~\cite{ChoG00}, Web caching~\cite{GaddeCR01}, dynamic information retrieval~\cite{RisvikM02}, change frequency estimations~\cite{ChoG03}, user behavior~\cite{AlmeidaMC07}, and more besides; however, these latter works focus on the dynamics of mostly unstructured content (text), whereas Linked Data is structured.
+The challenge of managing dynamic data in an effective manner is not unique to this particular setting. Various works have addressed related issues in the context of relational databases, in terms of database reorganization~\cite{LernerH90}, schema versioning~\cite{Roddick95}, view maintenance~\cite{GuptaM95}, among other topics; however, such works address the problem of dynamics in a local setting, whereas the decentralized nature of Linked Data poses non-trivial challenges. Researchers have also investigated dynamics in the context of the traditional Web, proposing techniques relating to incremental crawling~\cite{ChoG00}, Web caching~\cite{GaddeCR01}, dynamic information retrieval~\cite{RisvikM02}, change frequency estimations~\cite{ChoG03}, user behavior~\cite{AlmeidaMC07}, and more besides; however, these works focus on the dynamics of mostly unstructured content (text), whereas knowledge graphs are structured.
 
 While approaches for dealing with the dynamics of Linked Data can -- as we will see in this survey -- potentially borrow insights from the techniques and results developed in the context of relational databases~\cite{LernerH90,Roddick95,GuptaM95} and the Web~\cite{ChoG00,GaddeCR01,RisvikM02,ChoG03,AlmeidaMC07}, the combination of decentralization and structured data inherent to Linked Data implies unique challenges (and opportunities) with respect to dynamics, which can benefit from bespoke techniques that go beyond a straightforward synthesis of the state-of-the-art from other related areas.
 \medskip
 
-In the past years, a number of works have proposed bespoke concepts and techniques to address the inherent challenges of handling dynamic Linked Data. An important milestone was the initiation in 2010 of the W3C Dataset Dynamics Interest Group\footnote{https://www.w3.org/wiki/DatasetDynamics}: a community effort to study the dynamics of individual Linked Datasets and the broader Web of Data, motivated by the emergent challenges that were observed at that time. The community group at that time provided a brief survey of tools and techniques that could be brought to bear for taming dynamic Linked Data, including methods for link maintenance~\cite{PopitschH10,PopitschH11}, notification mechanisms~\cite{TrampFEA10}, subscription mechanisms~\cite{Fitzpatrick10,PassantM10}, change frequency~\cite{UmbrichHHPD10}, and more besides. A concise survey of these developments was provided by Umbrich et al.~\cite{UmbrichVH10} at that time. Since then a much broader range of works have emerged on the topic, investigating further aspects including archiving~\cite{UmbrichMP15}, caching mechanisms~\cite{MartinUA10,LampoVDR11,UmbrichKHP12,DehghanzadehPKUHD14,DividinoGS15,Kjernsmo15,ZhangSTQ15,NishiokaS17,dehghanzadeh2017}, change detection~\cite{ZeginisTC11,PapavasileiouFFKC13,DividinoKG14,PernelleSMT16}, change prediction~\cite{GonzalezH18,LoustaunauH19}, change verification~\cite{NishiokaS18}, continuous querying~\cite{DehghanzadehDGV15}, dynamic observatories~\cite{KaferUHP12}, synchronization~\cite{KnuthHS16,TummarelloMBE07}, versioning~\cite{GraubeHU14}, vocabularies~\cite{Berners04,Dady10} as well as more general works aiming to analyze, observe, model and understand dynamics in this setting~\cite{RulaPHSM12,DividinoSGG13,KaferAUOH13,DividinoGSG14,KaferWA17,NishiokaS15,NishiokaS16}.
+In the past years, a number of works have proposed bespoke concepts and techniques to address the inherent challenges of handling dynamic knowledge graphs in a Linked Data setting. An important milestone was the initiation in 2010 of the W3C Dataset Dynamics Interest Group\footnote{https://www.w3.org/wiki/DatasetDynamics}: a community effort to study the dynamics of individual Linked Datasets and the broader Web of Data, motivated by the emergent challenges that were observed at that time. The community group at that time provided a brief survey of tools and techniques that could be brought to bear for taming dynamic Linked Data, including methods for link maintenance~\cite{PopitschH10,PopitschH11}, notification mechanisms~\cite{TrampFEA10}, subscription mechanisms~\cite{Fitzpatrick10,PassantM10}, change frequency~\cite{UmbrichHHPD10}, and more besides. A concise survey of these developments was provided by Umbrich et al.~\cite{UmbrichVH10} at that time. Since then a much broader range of works have emerged on the topic, investigating further aspects including archiving~\cite{UmbrichMP15}, caching mechanisms~\cite{MartinUA10,LampoVDR11,UmbrichKHP12,DehghanzadehPKUHD14,DividinoGS15,Kjernsmo15,ZhangSTQ15,NishiokaS17,dehghanzadeh2017}, change detection~\cite{ZeginisTC11,PapavasileiouFFKC13,DividinoKG14,PernelleSMT16}, change prediction~\cite{GonzalezH18,LoustaunauH19}, change verification~\cite{NishiokaS18}, continuous querying~\cite{DehghanzadehDGV15}, dynamic observatories~\cite{KaferUHP12}, synchronization~\cite{KnuthHS16,TummarelloMBE07}, versioning~\cite{GraubeHU14}, vocabularies~\cite{Berners04,Dady10} as well as more general works aiming to analyze, observe, model and understand dynamics in this setting~\cite{RulaPHSM12,DividinoSGG13,KaferAUOH13,DividinoGSG14,KaferWA17,NishiokaS15,NishiokaS16}.
 
 %The distributed Web-based nature of the data requires LOD applications to keep local copies of the data in a cache for faster access at runtime. As the data on the Web changes, the applications's caches or indexes no longer reflect the current state of the data anymore and need to be updated, but this is a major challenge, because the remote sources are updated autonomously and independently of the local copies.
 
@@ -118,13 +122,15 @@ In summary, the past decade has seen the emergence of a wide range of techniques
 
 %Umbrich et al.~\cite{UmbrichVH10} surveyed an overview of existing dynamic datasets solutions. They provided a description of the aspects of the discovery, the level of granularity and the description of the changes, as well as detection algorithms and notification mechanisms. However, ten years have passed and since then various technical solutions have been presented to address the changes in datasets of the Web of Data. Thats why we perform a this Systematic Literature Reviews to summarise the existing evidence concerning a data dynamics in the Linked Open Data Web, to identify any gaps in current research in order to suggest areas for further investigation and to 
 
-\subsection{Survey Scopes}\label{Scopes}
+\subsection{Survey Scope}\label{Scopes}
 
 %\textbf{summay of the content taxonomy:}
 
-\ah{Aquí va mi propuesta para esta parte. He quitado la arquitectura de la aplicación y he intentado generalizar un poco la descripción del alcance. Quizás haya que ajustar las cosas un poco para que quepan mejor con el trabajo ya hecho.}
+%\ah{Aquí va mi propuesta para esta parte. He quitado la arquitectura de la aplicación y he intentado generalizar un poco la descripción del alcance. Quizás haya que ajustar las cosas un poco para que quepan mejor con el trabajo ya hecho.}
 
-This survey focuses on the challenging of \textit{consuming dynamic knowledge graphs in a Linked Data setting}. We identify the following four sub-topics relating to examples of key questions that a consumer wishes to be able to answer in such settings:
+This survey focuses on the challenges of \textit{managing and querying dynamic knowledge graphs in a Linked Data setting}. We focus, in particular, on querying dynamic RDF knowledge graphs published on the Web using Linked Data principles~\cite{ldprinciples,ldbook}.
+
+We construct the survey around four key sub-topics. By \textsc{Change} we refer to instantaneous and observable updates to a knowledge graph, which may be understood at various levels: at the level of an entity, a graph, a schema, a source, etc. \textsc{Dynamics} then refers to change over time, including changes in the past, present, and/or future. \textsc{Synchronization} refers to a consumer learning about the changes that have happened (recently), which again involve different levels of change. Finally,  \textsc{Maintenance} refers to the actions that a consumer should take once they learn of the nature of the changes, which may include updating links, invalidating query caches, etc. Taking into consideration these four sub-topics, we identify the following examples of key questions that a host and/or consumer may be faced with in such settings:
 
 \begin{description}
 \item[\textsc{Change}:] What can change in a knowledge graph? What can change across multiple knowledge graphs? How can these changes be extracted? 
@@ -133,7 +139,7 @@ This survey focuses on the challenging of \textit{consuming dynamic knowledge gr
 \item[\textsc{Maintenance}:] What action do I need to take to reflect changes? How do I efficiently execute these actions? How do I prioritize these actions?
 \end{description}
 
-By \textsc{Change} we refer to instantaneous and observable updates to a knowledge graph, which may be understood at various levels: at the level of an entity, a graph, a schema, a source, etc. \textsc{Dynamics} then refers to change over time, including changes in the past, present, and/or future. \textsc{Synchronization} refers to a consumer learning about the changes that have happened (recently), which again involve different levels of change. Finally,  \textsc{Maintenance} refers to the actions that a consumer should take once they learn of the nature of the changes, which may include updating links, invalidating query caches, etc.
+
 
 %This survey provides an overview of the published works related to data dynamics on the Linked Open Data and the challenges that this represents for the applications that consume them (see Figure~\ref{fig:pic}). Applications that use dynamic data, in different measures, frequencies and importance have had to develop methods to synchronize their results taking into account the changing nature of the origins. We have organized this survey taking into account the general scheme of applications that consume data from the decentralized web. In Section~\ref{Data}, we propose a general description of the works that have studied large datasets to perform qualitative and quantitative analyzes, looking for patterns and semantic dependencies in the data, as well as, proposals of methods to detect the changes between different datasets versions. These changesets  detected by data sources or applications have to been represented in different ways taking into account space, time and usability requirements. In section~\ref{Archiving}, we propose a deep look at the works related to the data dynamics representations. These changes, independently if they were physically represented, must take into account by the applications, for which multiple techniques, protocols and applications have been developed to changes propagations from the data sources to the applications. In Section~\ref{Index}, we analyze the available synchronization tools, as well as, their scope and limits. Finally, in section~\ref{Query}, we show the solutions adopted by the applications to deliver accurate responses and at the same time respond to the dynamics of the data. This survey relates the developed works associated with the evolution of datasets at the data level. However, there is a lot of work on detection, representation, and management of changes at the ontological level~\cite{ZablithAdFKMPS15}.
 %
@@ -184,7 +190,7 @@ By \textsc{Change} we refer to instantaneous and observable updates to a knowled
 
 \subsection{Survey Methodology}\label{Methodology}
 
-This systematic review was carried out following a fusion of the methodologies proposed by Kitchenham and Charters~\cite{keele07} and by Synder~\cite{snyder19}. An overview of our search methodology including the number of retrieved articles at each step is shown in Figure~\ref{fig:methodology}. We now present the main methodological decisions included in the review protocol, such as: the target research questions, the selection criteria used to determine which studies are included or excluded from the review, as well as the strategy used to find primary studies including search terms and systems used. %To reduce the possibilities of reviewer bias, the study was conducted by 3 reviewers from 2 different institutions and we applied some polities for enrich the primary studies based on references to ensure the completeness~\cite{Wohlin14}. 
+We carried out a systematic review following a fusion of the methodologies proposed by Kitchenham and Charters~\cite{keele07} and by Synder~\cite{snyder19}. An overview of our search methodology including the number of retrieved articles at each step is shown in Figure~\ref{fig:methodology}. We now present the main methodological decisions included in the review protocol, such as: the target research questions, the selection criteria used to determine which studies are included or excluded from the review, as well as the strategy used to find primary studies including search terms and systems used. %To reduce the possibilities of reviewer bias, the study was conducted by 3 reviewers from 2 different institutions and we applied some polities for enrich the primary studies based on references to ensure the completeness~\cite{Wohlin14}. 
 
 
 
@@ -192,19 +198,19 @@ This systematic review was carried out following a fusion of the methodologies p
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.8]{img/methodology.pdf}
-	\caption{Number of articles retrieved during literature review.}
+	\caption{Number of articles retrieved during literature review. \ah{update right-hand side to reflect document structure?}}
 	\label{fig:methodology}
 \end{figure*}
 
-\subsubsection{Research Question}\label{Question}
+\subsubsection{Research Questions}\label{Question}
 
 We identify the following high-level research questions based on the survey scope: 
 
 \begin{itemize}
 \item How can changes within knowledge graphs be characterized, formalized and described?
 \item How can the dynamics of knowledge graphs be characterized, formalized and described, and how can future changes be predicted?
-\item How can consumers be informed of changes in a timely fashion?
-\item 
+\item How can consumers be informed -- or inform themselves -- of changes in a timely fashion?
+\item How can changes be propagated to the results of a given query service or application?
 \end{itemize}
 
 %\textbf{Complementary Research Questions}
@@ -245,6 +251,8 @@ Based on the previous discussion, this survey includes papers that are:
 
 \end{itemize}
 
+In order to limit the scope, we do not consider in detail aspects relating to streaming (for which we refer to the survey by Dell'Aglio~\cite{DellAglioVHB17}) or to the evolution of semantics (for which we refer to the survey by Zablith et al.~\cite{ZablithAdFKMPS15}). We may however discuss such issues as they directly pertain to our main scope.
+
 \subsubsection{Search Strategy}\label{Search}
 
 Taking into account our research questions and eligibility criteria, we define two sets of keyphrases. In the first group of we include terms related to evolution or its consequences (e.g. "dynamics", "freshness", "refresh") and in the second group, terms related to the Semantic Web datasets (e.g. "linked data", "SPARQL", "knowledge graphs"). Then the search terms finally used were the product of concatenating the keyphrases from both sets (e.g. "dynamic linked data", "refresh SPARQL"). These groups of keyphrases were enriched iteratively evaluating the adequacy of the most relevant results found and synonyms extracted from the terminology used in some relevant results. Table~\ref{tab:terms} lists the keyphrases used to search for documents.
@@ -253,7 +261,7 @@ Taking into account our research questions and eligibility criteria, we define t
 
 \begin{table}[]
 	\centering
-	\caption{Keyphrases used to search for primary candidate papers. DY list Keyphrases relating to Dynamics; SW lists Keyphrases relating to the Semantic Web.}
+	\caption{Keyphrases used to search for primary candidate papers. DY lists keyphrases relating to Dynamics; LD lists keyphrases relating to Linked Data.}
 	\label{tab:terms}
 	\begin{tabular}{ll} 
 		\hline
@@ -267,19 +275,35 @@ Taking into account our research questions and eligibility criteria, we define t
 		"evolving"
 		"fresh"
 		"freshness"            \\ \hline
-		SW    & "knowledge graphs"
+		LD    & "knowledge graphs"
 		"linked data" \\ &
 		"linked $\cup$ open $\cup$ data"
 		"linked open data" \\ &
-		"LOD"
-		"RDF"
+		"lod"
+		"rdf"
 		"sparql"           \\ \hline
 	\end{tabular}
 \end{table}
 
 %\textbf{Resources}\label{Resources}
 
-Our search strategy consists of 6 phases until the final articles are obtained. In the first phase, we search on Google Scholar using our search terms, merging and removing duplicates from the lists of candidate documents; In the second phase, we made a limited filter by scanning the titles of the articles based on our inclusion and exclusion criteria; In the third phase, we apply a slightly deeper filter by reviewing the abstracts of the articles; in the fourth phase, we filter by the body relevance of the article; In the fifth phase, we expand our set of relevant works including those works referred into the related work, also the works citing the most relevant documents, and also documents written by the most prominent authors; finally, in the sixth phase, these last documents incorporated in the expansion phase are filtered by the body relevance of the article. Figure~\ref{fig:methodology} presents the number of documents considered for each phase of the methodology.
+Our search strategy involves six phases:
+
+\begin{enumerate}
+\item We search on Google Scholar using our search terms, merging and removing duplicates from the lists of candidate documents.
+\item We initially filter the candidates from the previous phase based on our inclusion and exclusion criteria by reviewing the titles of the articles, removing those that are clearly out of scope.
+\item We apply a slightly deeper filter on the candidates of the previous phase by reviewing the abstracts of the articles.
+\item We filter candidates according to the body of the article, producing a final sub-set of articles.
+\item We expand our set of candidates by selecting works cited by the most relevant documents identified in the previous stage, and by reviewing other papers written by the most prominent authors from the previous stage; potentially relevant works are identified based on their title.
+\item We filter the articles identified in the previous phase by abstract and then by body.
+\end{enumerate}   
+Figure~\ref{fig:methodology} presents the number of documents considered for each phase of the methodology.
+
+\subsubsection{Survey Outline}\label{Outline}
+
+The survey is structured as follows:
+
+\ah{revise later}
 
 \section{Data Dynamics}\label{Data}
 
