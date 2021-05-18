@@ -18,6 +18,15 @@
 \newcommand{\ah}[1]{{\color{blue!70!black}\textsc{ah:} #1}}
 \newcommand{\li}[1]{{\color{red!50!black}\textsc{am:} #1}}
 
+\newcommand{\I}{\ensuremath{\mathbf{I}}}
+\newcommand{\B}{\ensuremath{\mathbf{B}}}
+\renewcommand{\L}{\ensuremath{\mathbf{L}}}
+\newcommand{\V}{\ensuremath{\mathbf{V}}}
+
+\newcommand{\deref}[1]{\ensuremath{\mathrm{deref{#1}}}}
+\newcommand{\dom}[1]{\ensuremath{\mathrm{dom(#1)}}}
+\newcommand{\serv}[1]{\ensuremath{\mathrm{serv(#1)}}}
+
 %%%%%%%%%%% Put your definitions here
 \newtheorem{example}{Example}
 
@@ -299,59 +308,62 @@ Our search strategy involves six phases:
 \end{enumerate}   
 Figure~\ref{fig:methodology} presents the number of documents considered for each phase of the methodology.
 
-\subsubsection{Survey Outline}\label{Outline}
+
+\subsection{Preliminaries}
+
+We provide some preliminaries that establish definitions and notation used throughout.
+
+In the context of Linked Data, RDF is the standard data model~\cite{rdfconcepts11}. RDF uses three pairwise disjoint sets of \emph{RDF terms}: IRIs (\I), literals (\textbf{L}), and blank nodes (\textbf{B}). Statements in RDF are represented as triples $(s,p,o) \in (\I \cup \B) \times \I \times (\I \cup \B \cup \L)$, where $s$ is called subject, $p$ is called predicate, and $o$ is called object. Each triple of this form can be seen as forming a directed edge $s \xrightarrow{p} o$ that extends from $s$ to $o$ and is labelled $p$. Thus a set of RDF triples is known as an \emph{RDF graph}.
+
+Linked Data introduces the notion of \emph{dereferencing}, where an IRI $i \in \I$ can be looked up over HTTP and may return an RDF graph. To represent this, we use the dereferencing function $\deref\,:\,\I \rightarrow 2^{(\I \cup \B) \times \I \times (\I \cup \B \cup \L)}$, which accepts an IRI and returns an RDF graph. This function applies a HTTP lookup of an IRI, is assumed to follow redirects, and abstracts away details such as content negotiation and RDF syntaxes. In case that the IRI does not return an RDF document when dereferenced, we assume that it returns the empty RDF graph.
+
+The standard way to query RDF graphs is through SPARQL~\cite{sparql11}. At the core of SPARQL is the notion of a triple pattern. Triple patterns introduce a fourth set of terms that are disjoint with the RDF terms, called variables ($\V$). A triple pattern $(s,p,o) \in (\I \cup \B \cup \L \cup \V) \times (\I \cup \V) \times (\I \cup \B \cup \L \cup \V)$ is then an RDF triple that allows variables in any position. Since blank nodes in triple patterns can be replaced by variables and literal subjects never return any results, we will henceforth assume for simplicity that triple patterns do not contain blank nodes or literal subjects. %$(s,p,o) \in (\I \cup \V) \times (\I \cup \V) \times (\I \cup \L \cup \V)$ 
+A set of triple patterns is called a \emph{basic graph pattern}. Let $P$ denote a basic graph pattern and $G$ an RDF graph. The \emph{evaluation} of $P$ over $G$, denoted $P(G)$, is defined in terms of a set of \emph{solution mappings}. A solution mapping $\mu : \V \rightarrow \I \cup \B \cup \L$ is a partial mapping from variables to RDF terms. We denote by $\dom{\mu}$ the set of variables for which $\mu$ is defined. Now we can define:
+%
+\[ P(G) = \{ \mu \mid \mu(P) \subseteq G\text{ and }\dom{\mu} = \V_P \} \]
+%
+\noindent where $\mu(P)$ denotes the image of $P$ under $\mu$ (i.e., the result of replacing each $v \in \dom{\mu}$ with $\mu(v)$ in $P$), and where $\V_P$ denotes the set of variables used in $P$. We call $P(G)$ the \emph{solutions} or \emph{results} of $P$ over $G$.
+
+\emph{SPARQL services} on the Web offer a convenient interface for clients to send queries to a remote RDF dataset via HTTP. Given an IRI $i \in I$, we denote by $\serv{i}$ the SPARQL service located at $i$, and further given a basic graph pattern $P$, we denote by $P(\serv{i})$ the evaluation of $P$ on the default graph indexed by $\serv{i}$, returning the empty set in case of error (e.g., if there is no SPARQL service located at $i$).
+
+In this survey, we are interested in works that relate to managing changes in local and remote RDF graphs over time, as well as how these changes may affect local and remote SPARQL results over time, as well as other applications depending on that RDF content.
+
+\subsection{Survey Outline}\label{Outline}
 
 The survey is structured as follows:
 
 \ah{revise later}
 
-\section{Data Dynamics}\label{Data}
+\section{Change}\label{Change}
 
-By analyzing some of the most used LOD datasets we can see a clear trend in growth expressed for example in the size, but in this Section, we are interested in the dynamics of that evolution. To query continuously evolving linked datasets, it is useful to understand how datasets (or parts of them) evolve, and how this evolution is related to the data itself, to measure, analyze, and predict data evolution.
+When we speak of dynamics, the elementary phenomenon is that of change, which can be defined independently of time. Specifically, we are interested in characterizing how (possibly dereferenced) RDF graphs change. Being able to understand and characterize changes in RDF content is an important first step towards managing dynamic RDF content.
 
-Being able to understand and characterize change is important for many practical reasons. When applications locally store descriptions that originate from various remote datasets, awareness of the changes that such descriptions undergo at their origin allows for timely updates, and hence delivering services based on fresh information. Also, an understanding of a dataset's pace of change can inform a decision as to whether an application will cache its content locally, or remotely query it on the fly~\cite{UmbrichKHP12, ekawUmbrichKHP12}.
+Specifically regarding change, we identify the following four aspects:
 
-Given its importance, not a few authors have been concerned with studying the data dynamics with the hope put in the hypothesis that it is possible to predict certain events from observing the previous ones and inferring semantic and context rules. However, on the way to understanding the dynamics they make decisions such as the choice of the dataset, the definition of dynamics and the selection of a methodology to follow.
+\begin{description}
+\item[Granularity:] Change can be characterized at different levels of granularity; we may consider changes in RDF content at the level of triples, entities, graphs, schema, query results, domain, etc.
+\item[Degree:] Changes can be minor or can be major, where there are many ways in which we may choose to quantify the degree of change in RDF at varying levels of granularity.
+\item[Detection:] Given two different versions of RDF content, we need techniques to detect what, specifically, has changed between both versions.
+\item[Description:] When changes occur, we may wish to serialize those changes so that they can be acted upon, for example, to communicate those changes succinctly to clients.
+\end{description}
 
-With respect to the choice of the dataset, it faces the determination of domain, size, completeness, veracity and availability of historical information. With respect to the definition of dynamics, everyone agrees that it is a function of the changes and time, and that is where the distinctions begin between objects to observe the changes (for example, statements, entities, schema, domain, etc.) and the discretization of the time or frequency to observation of changes (for example, hourly, daily, weekly, etc.). For the determination of the methodology, there are variations in the methods used, nevertheless, we distinguish the presence of qualitative and quantitative approaches. Qualitative approaches attempt to detect changes at different levels of complexity according to their definition of dynamics while quantitative approaches attempt to measure change and dynamicity using math functions.
+In this section we will survey the literature regarding each of these four aspects in turn.
 
-Hereinafter, we explain each of these edges in detail, we describe the main approaches to detect change at certain granularity levels and to perform complex analysis to capture patterns and metrics that allow for characterizing, measuring, and understanding the dynamics of a dataset. At the end, with a general discussion of the achievements and open questions.
+%important for many practical reasons. When applications locally store descriptions that originate from various remote datasets, awareness of the changes that such descriptions undergo at their origin allows for timely updates, and hence delivering services based on fresh information. 
 
-As we mention before, the standard approach to represent data published as LD is RDF. It is a graph-structured model based on three disjoint sets of terms: IRIs (\textbf{I}), literals (\textbf{L}), and blank nodes (\textbf{B}). The information is organized into triples $(s,p,o) \in$ \textbf{I} $\cup$ \textbf{B} $\times$ \textbf{I} $\times$ \textbf{I} $\cup$ \textbf{B} $\cup$ \textbf{L}, where $s$ is called subject, $p$ is called predicate, and $o$ is called object. 
+%Also, an understanding of a dataset's pace of change can inform a decision as to whether an application will cache its content locally, or remotely query it on the fly~\cite{UmbrichKHP12, ekawUmbrichKHP12}.
 
-\subsection{Versioned Datasets}\label{Datasets}
+%Given its importance, various authors have been concerned with studying the data dynamics with the hope put in the hypothesis that it is possible to predict certain events from observing the previous ones and inferring semantic and context rules. However, on the way to understanding the dynamics they make decisions such as the choice of the dataset, the definition of dynamics and the selection of a methodology to follow.
 
-To understand the dynamics of a data source, information about the historical evolution of that data source is needed, but is rarely accessible. For research on how LD data sources change over time it is desirable to be cross-domain, contiguous, frequent and real-world data, also large-scale, diverse and dynamic. We show what that means:
 
-\begin{itemize}
-	
-\item \textbf{cross-domain:} capturing a wide selection of Linked Data domains;
-\item \textbf{contiguous:} access to consecutive snapshots without holes;
-\item \textbf{frequent:} short time between snapshots;
-\item \textbf{real-world:} not synthetic data; 
-\item \textbf{large-scale:} large number of elements;
-\item \textbf{diverse:} suitable for studying for a wide range of applications;
-\item \textbf{dynamic:} large changes between versions.
 
-\end{itemize}
+%With respect to the choice of the dataset, it faces the determination of domain, size, completeness, veracity and availability of historical information. With respect to the definition of dynamics, everyone agrees that it is a function of the changes and time, and that is where the distinctions begin between objects to observe the changes (for example, statements, entities, schema, domain, etc.) and the discretization of the time or frequency to observation of changes (for example, hourly, daily, weekly, etc.). For the determination of the methodology, there are variations in the methods used, nevertheless, we distinguish the presence of qualitative and quantitative approaches. Qualitative approaches attempt to detect changes at different levels of complexity according to their definition of dynamics while quantitative approaches attempt to measure change and dynamicity using math functions.
+%
+%Hereinafter, we explain each of these edges in detail, we describe the main approaches to detect change at certain granularity levels and to perform complex analysis to capture patterns and metrics that allow for characterizing, measuring, and understanding the dynamics of a dataset. At the end, with a general discussion of the achievements and open questions.
+%
+%As we mention before, the standard approach to represent data published as LD is RDF. 
 
-We found that there are not many linked versioned datasets with all of these features. For this reason, a number of datasets have been developed and used for research on how LD data sources change over time. 
-
-Umbrich et al.~\cite{UmbrichHHPD10} created a small one consisting of 24 weekly snapshots of RDF Web data used to analyze changes in documents. However, the recovery strategy allowed incomplete changes history for some documents. It is wished monitor the same objects in each version.
-
-The better enforce found was DyLDO, which have been created especially for this purpose\footnote{http://km.aifb.kit.edu/projects/dyldo/data/} and it is used in several studies. It has been created monitoring a fixed set of Linked Data documents (and their neighborhood) on a weekly basis~\cite{KaferUHP12, KaferAUOH13}. As of march 3rd, 2020, it is composed of 399 weekly snapshots corresponding to a period from May 6, 2012 to March 1st, 2020 (both inclusive). Furthermore, the DyLDO dataset contains samples of various well known and large LOD sources, e.g., dbpedia.com, musicbrainz.com, and bbc.co.uk, as well as less commonly known ones, e.g., advogato.org, statistics.data.gov.uk, and uefa.status.net. Using the weekly crawls obtained from the DyLDO dataset, one can only analyze changes occurring between consecutive weeks (e.g., daily changes cannot be considered).
-
-Some of the datasets that are used, some of them  (), while others are datasets that have naturally evolved and where it is possible to access historical changes (Wikidata, DBpedia, etc.). There are also tools that allow for building this historical data (Multicrawler, LDSpider).
-
-Other datasets used, correspond to cross-domain Knowledge Graphs (KG) that have naturally evolved and where it is possible to access historical changes, such as Wikidata and DBpedia. Wikidata~\cite{VrandecicK14} is a large, open cross-domain KG started in October 2012 hosted by the Wikimedia Foundation and it is used by Wikimedia projects, such as Wikipedia. It contains structured information and it is maintained collaboratively by volunteer editors who generate continuous changes. Furthermore, due to the shutdown of Freebase\footnote{http://www.freebase.com}, a popular Knowledge Graph run by Google, data in Freebase have been migrated into Wikidata. Thus, Wikidata is expected to be used in many applications. It is possible to obtain the snapshots from the Wikidata RDF exports\footnote{https://dumps.wikimedia.org/wikidatawiki/entities/} on a weekly basis. 
-
-DBpedia, on the other hand, is a project whose objective is to extract structured content from the information created in the Wikipedia project. Historical information is available \footnote{https://wiki.dbpedia.org/develop/datasets}. However, new releases require manual effort and therefore are not very up to date. DBpedia Live is a DBpedia-based project that processes the hundreds of editions per minute that are generated in wikipedia to provide a constant stream of updates for DBpedia. 
-
-Another alternative is to use crawling software, such as LDSpider~\cite{IseleUBH10} or the MultiCrawler~\cite{HarthUD06} framework to crawl from an initial list of URLs. This produces quad data obtained from dereferencing the seed URIs. The quads contain the triples from the download, with the fourth context position indicating the URI of the information resource from which the triple was downloaded (i.e. the source of the triple).
-
-The last option is to use synthetic data~\cite {MeimarisP16}, which is not useful to study dynamics patterns but to evaluate tools involved such as change detection and archiving.
-
-\subsection{Granularity Levels}\label{Granularity}
+\subsection{Change Granularity}\label{Granularity}
 
 When considering a set of LOD sources, undoubtedly some of them change more or less often than others~\cite{KaferAUOH13, DividinoGSG14}. For example, it is not likely that in a short interval of time each source of LOD will change, so it is not necessary to obtain fresh data from static sources. However, when data from a source changes, an update is required. Consequently, some sources must be refreshed at shorter or longer time intervals. This implies that each source of LOD can be assigned a different update importance, which is based on its change behavior. Similarly, within the sources, we may observe different change behavior from different points of view or granularity levels, such as changes involving concepts, properties, or triples.
 
@@ -372,7 +384,7 @@ With respect to entity, some works consider an entity's description as the set o
 
 In the case of the scheme, some authors study the evolution of the schema taking into account the independent terms used as predicates or classes~\cite{KaferAUOH13, KaferWA17}, others~\cite{DividinoSGG13, GonzalezH18} use the signature of the scheme of documents involving predicates and classes using the concept of $Characteristic$ $Sets$ proposed by Neumann and Moerkotte~\cite{NeumannM11} or changes in their use $Mapping$ $Sets$~\cite{DividinoSGG13}.
 
-\subsection{Change Metrics}\label{Detection}
+\subsection{Change Degree}\label{Detection}
 
 To understand the dynamics of the datasets, one of the approaches followed is quantitative. For this, it is necessary to define a measure to quantify the changes that have occurred between two versions of an object.
 
@@ -407,39 +419,6 @@ To quantify change, some frameworks~\cite{DividinoGSG14, NishiokaS15} use Jaccar
 Equation~\ref{eq:Inequality} and Equation~\ref{eq:Jaccard} consider the objects to be compared as sets; for example, a resource or a dataset may be described by a set of triples. Equation~\ref{eq:Cosine} and Equation~\ref{eq:Euclidean} are based on widely used metrics and assume the input $R_i$ as vectors of $R_{ij}$ values.
 
 It is desired to compare RDF content, not document syntax; thus, the comparison is complicated by the presence of blank nodes. For example, to check if the content of an RDF graph with blank nodes has changed over time it is necessary to check graph isomorphism between RDF graphs. This is difficult, because of the size of the graphs and the complexity of the task, so some works filter out triples that contain a blank node from the snapshots~\cite{NishiokaS18, KaferAUOH13} while others detect isomorphisms among RDF graphs from different snapshots and replace the blank nodes by URIs~\cite{UmbrichHHPD10}, using hash-based skolemization as per the approach described by Hogan in~\cite{Hogan15}.
-
-The number of changes observed in the two snapshots does not reflect the entire history of changes that occurred between them. To quantify the evolution of a dataset it is necessary to take into consideration the changes occurring over a period of time. Dividino et al.~\cite{DividinoGSG14} define dynamics as an aggregation of changes (see Equation~\ref{eq:dyn}), built on top of contemporary change metrics $\delta$ (see Equation~\ref{eq:Inequality}-\ref{eq:Euclidean}). They understand a period of time as a continuous time interval beginning at an initial point in time $t_1$ up to a final one $t_n$ and defined the dynamics of a dataset as the integration of its change rate over time (see Figure~\ref{fig:d1}). Due to this time-dependence, a measure for dynamics should capture the frequency, degree, and regularity of the data changes. However, also the change rate function is not explicitly known, and cannot be used for the computation, i.e., it is not possible to determine the change rate of a dataset for a given point in time. Thus, their idea was to use an approximation based on discrete points in time and the changes between the datasets at these times (see Equation~\ref{eq:dyn} and Figure~\ref{fig:d2}).
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.4]{img/d1.png}
-	\caption{The dynamics as an integration of a continuous change function over time~\cite{DividinoGSG14}.}
-	\label{fig:d1}
-\end{figure}
-
-\begin{equation}
-\label{eq:dyn}
-\Theta(X)^{t_n}_{t_1} = \sum_{i = 2}^{n} \delta_{metric}(X_{t_i}, X_{t_{i-1}})
-\end{equation}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.3]{img/d2.png}
-	\caption{The dynamics as aggregation of $\delta_{metric}$~\cite{DividinoGSG14}.}
-	\label{fig:d2}
-\end{figure}
-
-However, for most applications, the changes tend to be less important as time goes by, for example, if a dataset used to change a lot but no longer does, it may be necessary to adapt its index update strategy. For this purpose, some frameworks~\cite{DividinoGSG14, KnuthHS16} extend this notion (see Equation~\ref{eq:dyn:decay}) incorporating a decay function within the dynamics computation to differentiate the changes depending on when they occurred in the observed time interval using the exponential function (see Equation~\ref{eq:decay}) as an aging factor ($\lambda$).
-
-\begin{equation}
-\label{eq:decay}
-f(i) = e^{-\lambda (n-i)}
-\end{equation}
-
-\begin{equation}
-\label{eq:dyn:decay}
-\Theta_{decay}(X)^{n}_{1} = \sum_{i = 2}^{n} f(i) \delta_{metrics}(X_{i}, X_{i-1})
-\end{equation}
 
 \subsection{Change Detection}
 
@@ -576,11 +555,47 @@ In this table, \textbf{Year} corresponds to the year of publication, \textbf{Gra
 	
 \end{description}
 
+
+
 \subsection{Open Questions}\label{Open1}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci. In hac habitasse platea dictumst.
+\section{Dynamics}\label{Change}
+
+\subsection{Evolution}
+
+The number of changes observed in the two snapshots does not reflect the entire history of changes that occurred between them. To quantify the evolution of a dataset it is necessary to take into consideration the changes occurring over a period of time. Dividino et al.~\cite{DividinoGSG14} define dynamics as an aggregation of changes (see Equation~\ref{eq:dyn}), built on top of contemporary change metrics $\delta$ (see Equation~\ref{eq:Inequality}-\ref{eq:Euclidean}). They understand a period of time as a continuous time interval beginning at an initial point in time $t_1$ up to a final one $t_n$ and defined the dynamics of a dataset as the integration of its change rate over time (see Figure~\ref{fig:d1}). Due to this time-dependence, a measure for dynamics should capture the frequency, degree, and regularity of the data changes. However, also the change rate function is not explicitly known, and cannot be used for the computation, i.e., it is not possible to determine the change rate of a dataset for a given point in time. Thus, their idea was to use an approximation based on discrete points in time and the changes between the datasets at these times (see Equation~\ref{eq:dyn} and Figure~\ref{fig:d2}).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.4]{img/d1.png}
+	\caption{The dynamics as an integration of a continuous change function over time~\cite{DividinoGSG14}.}
+	\label{fig:d1}
+\end{figure}
+
+\begin{equation}
+\label{eq:dyn}
+\Theta(X)^{t_n}_{t_1} = \sum_{i = 2}^{n} \delta_{metric}(X_{t_i}, X_{t_{i-1}})
+\end{equation}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.3]{img/d2.png}
+	\caption{The dynamics as aggregation of $\delta_{metric}$~\cite{DividinoGSG14}.}
+	\label{fig:d2}
+\end{figure}
+
+However, for most applications, the changes tend to be less important as time goes by, for example, if a dataset used to change a lot but no longer does, it may be necessary to adapt its index update strategy. For this purpose, some frameworks~\cite{DividinoGSG14, KnuthHS16} extend this notion (see Equation~\ref{eq:dyn:decay}) incorporating a decay function within the dynamics computation to differentiate the changes depending on when they occurred in the observed time interval using the exponential function (see Equation~\ref{eq:decay}) as an aging factor ($\lambda$).
+
+\begin{equation}
+\label{eq:decay}
+f(i) = e^{-\lambda (n-i)}
+\end{equation}
+
+\begin{equation}
+\label{eq:dyn:decay}
+\Theta_{decay}(X)^{n}_{1} = \sum_{i = 2}^{n} f(i) \delta_{metrics}(X_{i}, X_{i-1})
+\end{equation}
 
 \section{Archiving Policies}\label{Archiving}
 ~\cite{SandersonS12,Papastefanatos13,MeimarisPPGS14}
@@ -853,8 +868,39 @@ Gonz\'{a}lez and Hogan~\cite{GonzalezH18} used a Linear Regression Model to pred
 \subsection{Open Questions}\label{Open4}
 
 
+\section{Homeless}
 
+\subsection{Versioned Datasets}\label{Datasets}
 
+To understand the dynamics of a data source, information about the historical evolution of that data source is needed, but is rarely accessible. For research on how LD data sources change over time it is desirable to be cross-domain, contiguous, frequent and real-world data, also large-scale, diverse and dynamic. We show what that means:
+
+\begin{itemize}
+	
+\item \textbf{cross-domain:} capturing a wide selection of Linked Data domains;
+\item \textbf{contiguous:} access to consecutive snapshots without holes;
+\item \textbf{frequent:} short time between snapshots;
+\item \textbf{real-world:} not synthetic data; 
+\item \textbf{large-scale:} large number of elements;
+\item \textbf{diverse:} suitable for studying for a wide range of applications;
+\item \textbf{dynamic:} large changes between versions.
+
+\end{itemize}
+
+We found that there are not many linked versioned datasets with all of these features. For this reason, a number of datasets have been developed and used for research on how LD data sources change over time. 
+
+Umbrich et al.~\cite{UmbrichHHPD10} created a small one consisting of 24 weekly snapshots of RDF Web data used to analyze changes in documents. However, the recovery strategy allowed incomplete changes history for some documents. It is wished monitor the same objects in each version.
+
+The better enforce found was DyLDO, which have been created especially for this purpose\footnote{http://km.aifb.kit.edu/projects/dyldo/data/} and it is used in several studies. It has been created monitoring a fixed set of Linked Data documents (and their neighborhood) on a weekly basis~\cite{KaferUHP12, KaferAUOH13}. As of march 3rd, 2020, it is composed of 399 weekly snapshots corresponding to a period from May 6, 2012 to March 1st, 2020 (both inclusive). Furthermore, the DyLDO dataset contains samples of various well known and large LOD sources, e.g., dbpedia.com, musicbrainz.com, and bbc.co.uk, as well as less commonly known ones, e.g., advogato.org, statistics.data.gov.uk, and uefa.status.net. Using the weekly crawls obtained from the DyLDO dataset, one can only analyze changes occurring between consecutive weeks (e.g., daily changes cannot be considered).
+
+Some of the datasets that are used, some of them  (), while others are datasets that have naturally evolved and where it is possible to access historical changes (Wikidata, DBpedia, etc.). There are also tools that allow for building this historical data (Multicrawler, LDSpider).
+
+Other datasets used, correspond to cross-domain Knowledge Graphs (KG) that have naturally evolved and where it is possible to access historical changes, such as Wikidata and DBpedia. Wikidata~\cite{VrandecicK14} is a large, open cross-domain KG started in October 2012 hosted by the Wikimedia Foundation and it is used by Wikimedia projects, such as Wikipedia. It contains structured information and it is maintained collaboratively by volunteer editors who generate continuous changes. Furthermore, due to the shutdown of Freebase\footnote{http://www.freebase.com}, a popular Knowledge Graph run by Google, data in Freebase have been migrated into Wikidata. Thus, Wikidata is expected to be used in many applications. It is possible to obtain the snapshots from the Wikidata RDF exports\footnote{https://dumps.wikimedia.org/wikidatawiki/entities/} on a weekly basis. 
+
+DBpedia, on the other hand, is a project whose objective is to extract structured content from the information created in the Wikipedia project. Historical information is available \footnote{https://wiki.dbpedia.org/develop/datasets}. However, new releases require manual effort and therefore are not very up to date. DBpedia Live is a DBpedia-based project that processes the hundreds of editions per minute that are generated in wikipedia to provide a constant stream of updates for DBpedia. 
+
+Another alternative is to use crawling software, such as LDSpider~\cite{IseleUBH10} or the MultiCrawler~\cite{HarthUD06} framework to crawl from an initial list of URLs. This produces quad data obtained from dereferencing the seed URIs. The quads contain the triples from the download, with the fourth context position indicating the URI of the information resource from which the triple was downloaded (i.e. the source of the triple).
+
+The last option is to use synthetic data~\cite {MeimarisP16}, which is not useful to study dynamics patterns but to evaluate tools involved such as change detection and archiving.
 
 
 
